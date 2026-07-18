@@ -61,7 +61,18 @@ export default function FloatingContactButton() {
         onClick={() => setIsOpen(!isOpen)}
         whileHover={{ scale: 1.1 }}
         whileTap={{ scale: 0.95 }}
+        animate={{
+          y: [0, -10, 0],
+        }}
+        transition={{
+          duration: 2,
+          repeat: Infinity,
+          ease: "easeInOut",
+        }}
         className="w-14 h-14 rounded-full bg-black text-white shadow-lg flex items-center justify-center transition-colors hover:bg-black/90"
+        style={{
+          boxShadow: "0 0 20px rgba(0, 0, 0, 0.5), 0 0 40px rgba(0, 0, 0, 0.3)",
+        }}
       >
         <AnimatePresence mode="wait">
           {isOpen ? (
