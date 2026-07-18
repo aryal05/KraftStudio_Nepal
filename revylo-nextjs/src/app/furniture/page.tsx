@@ -1,5 +1,10 @@
+import { Suspense } from "react";
 import ProductListing from "@/components/pages/ProductListing";
 
 export default function FurniturePage() {
-  return <ProductListing />;
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <ProductListing />
+    </Suspense>
+  );
 }
