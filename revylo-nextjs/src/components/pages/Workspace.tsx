@@ -1,3 +1,6 @@
+"use client";
+
+import { useState } from "react";
 import { formatNPR } from "@/lib/utils";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
