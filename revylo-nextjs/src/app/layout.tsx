@@ -5,6 +5,7 @@ import { ThemeProvider } from "@/contexts/ThemeContext";
 import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import ErrorBoundary from "@/components/ErrorBoundary";
+import FloatingContactButton from "@/components/FloatingContactButton";
 
 export const metadata: Metadata = {
   title: "KraftStudio - Modern Furniture & Decor E-Commerce",
@@ -30,6 +31,7 @@ export default function RootLayout({
               <TRPCProvider>
                 <Toaster />
                 {children}
+                <FloatingContactButton />
               </TRPCProvider>
             </TooltipProvider>
           </ThemeProvider>
