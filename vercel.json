@@ -1,20 +1,11 @@
 {
-  "buildCommand": "pnpm run build",
-  "outputDirectory": "dist/public",
-  "framework": "vite",
-  "installCommand": "pnpm install",
-  "devCommand": "pnpm run dev",
+  "buildCommand": "cd revylo-nextjs && pnpm build",
+  "outputDirectory": "revylo-nextjs/.next",
+  "framework": "nextjs",
+  "installCommand": "cd revylo-nextjs && pnpm install",
+  "devCommand": "cd revylo-nextjs && pnpm dev",
   "env": {
+    "DATABASE_URL": "@database_url",
     "NODE_ENV": "production"
-  },
-  "routes": [
-    {
-      "src": "/api/(.*)",
-      "dest": "/api/$1"
-    },
-    {
-      "src": "/(.*)",
-      "dest": "/$1"
-    }
-  ]
+  }
 }
