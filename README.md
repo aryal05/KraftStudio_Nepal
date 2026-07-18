@@ -1,115 +1,119 @@
-# KraftStudio - Interior Design Platform
+# Revylo - Interior Design & Furniture E-commerce
 
-A modern interior design and furniture catalog platform built with React, TypeScript, and Vite.
+Modern Next.js e-commerce platform for furniture, lighting, and home decor.
 
-## Features
+## 🚀 Quick Start
 
-- 🏠 Browse furniture, lighting, and decor collections
-- 🎨 Interactive catalog with product details
-- 📱 Responsive design for all devices
-- ⚡ Fast performance with Vite
-- 🎭 Smooth animations with Framer Motion
-- 🔐 Admin dashboard for catalog management
-
-## Tech Stack
-
-- **Frontend**: React 19, TypeScript, Vite
-- **Styling**: Tailwind CSS
-- **UI Components**: Radix UI
-- **Animations**: Framer Motion
-- **Icons**: Lucide React
-- **Routing**: Wouter
-- **Backend**: Express, tRPC
-- **Database**: MySQL with Drizzle ORM
-
-## Getting Started
-
-### Prerequisites
-
-- Node.js 18+ and pnpm installed
-- MySQL database (for development)
-
-### Installation
-
-1. Clone the repository:
 ```bash
-git clone https://github.com/aryal05/KraftStudio.git
-cd KraftStudio
+cd revylo-nextjs
+pnpm install
+pnpm dev
 ```
 
-2. Install dependencies:
+Open [http://localhost:3000](http://localhost:3000)
+
+## 📁 Project Structure
+
+```
+revylo/
+├── revylo-nextjs/       # Main Next.js application
+├── drizzle/             # Database schema & migrations  
+├── references/          # API documentation
+└── .env                 # Environment configuration
+```
+
+## 💻 Tech Stack
+
+- **Framework**: Next.js 14 (App Router)
+- **UI**: Tailwind CSS + Framer Motion
+- **Database**: MySQL + Drizzle ORM
+- **API**: tRPC
+- **Forms**: React Hook Form + Zod
+
+## 🎯 Key Features
+
+- Modern responsive design
+- Product catalog with filtering
+- Shopping cart functionality
+- Appointment booking system
+- Admin dashboard
+- All prices in NPR (Nepali Rupees)
+
+## 📄 Main Pages
+
+| Route | Description |
+|-------|-------------|
+| `/` | Homepage |
+| `/furniture` | Furniture catalog |
+| `/lighting` | Lighting products |
+| `/decor` | Decor items |
+| `/workspace` | Office solutions |
+| `/cart` | Shopping cart |
+| `/admin` | Admin dashboard |
+
+## 🛠️ Commands
+
 ```bash
+# Development
+pnpm dev              # Start dev server
+pnpm build            # Build for production
+pnpm start            # Run production build
+
+# Database
+pnpm db:push          # Sync schema
+pnpm db:studio        # Open DB UI
+
+# Code quality
+pnpm lint             # Run linter
+```
+
+## 💰 Currency
+
+All prices displayed in **NPR (Nepali Rupees)**
+- Uses `formatNPR()` utility from `@/lib/utils`
+- Example: NPR 1,299 or Rs. 1,299
+
+## 📚 Documentation
+
+- `CURRENCY_UPDATE.md` - Currency conversion guide
+- `revylo-nextjs/QUICK_START.md` - Detailed setup guide
+
+## 🔗 Important Links
+
+- **Main App**: `revylo-nextjs/` directory
+- **Database Schema**: `drizzle/schema.ts`
+- **API Routes**: `revylo-nextjs/src/app/api/`
+- **Components**: `revylo-nextjs/src/components/`
+
+## 🆘 Troubleshooting
+
+**Port in use?**
+```bash
+npx kill-port 3000
+```
+
+**Clear cache:**
+```bash
+cd revylo-nextjs
+rm -rf .next
+pnpm dev
+```
+
+**Reinstall:**
+```bash
+rm -rf node_modules
 pnpm install
 ```
 
-3. Set up environment variables:
-Create a `.env` file in the root directory with the following:
-```env
-DATABASE_URL=mysql://user:password@localhost:3306/kraftstudio
-NODE_ENV=development
-```
+## 📞 Support
 
-4. Run database migrations:
-```bash
-pnpm run db:push
-```
+Check the documentation files or refer to:
+- [Next.js Docs](https://nextjs.org/docs)
+- [Tailwind CSS](https://tailwindcss.com/docs)
+- [Drizzle ORM](https://orm.drizzle.team/docs)
 
-5. Start the development server:
-```bash
-pnpm run dev
-```
+---
 
-The application will be available at `http://localhost:5000`
-
-## Deployment
-
-### Vercel Deployment
-
-1. Push your code to GitHub
-2. Import the project in Vercel
-3. Configure environment variables in Vercel dashboard
-4. Deploy!
-
-The project is configured with `vercel.json` for optimal deployment.
-
-### Build for Production
-
-```bash
-pnpm run build
-```
-
-The build output will be in the `dist` directory.
-
-## Project Structure
-
-```
-kraftstudio/
-├── client/           # Frontend React application
-│   ├── src/
-│   │   ├── components/  # Reusable UI components
-│   │   ├── pages/       # Page components
-│   │   ├── hooks/       # Custom React hooks
-│   │   └── lib/         # Utility functions
-│   └── public/      # Static assets
-├── server/          # Backend Express + tRPC server
-│   └── _core/       # Core server logic
-├── shared/          # Shared types and constants
-└── vercel.json      # Vercel deployment config
-```
-
-## Scripts
-
-- `pnpm run dev` - Start development server
-- `pnpm run build` - Build for production
-- `pnpm run start` - Start production server
-- `pnpm run check` - Type check with TypeScript
-- `pnpm run format` - Format code with Prettier
-- `pnpm run db:push` - Run database migrations
-
-## License
-
-MIT
-
-## Author
-
-Built with ❤️ by the KraftStudio team
+**Status**: ✅ Production Ready
+**Last Updated**: Migration to Next.js complete
+**Currency**: NPR (Nepali Rupees)
