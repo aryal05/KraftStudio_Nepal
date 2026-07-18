@@ -1,7 +1,7 @@
 // @ts-nocheck
 import { eq } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/mysql2";
-import { InsertUser, users, products, cartItems, bookings } from "../../../drizzle/schema";
+import { InsertUser, users, products, cartItems, bookings } from "../../drizzle/schema";
 
 let _db: ReturnType<typeof drizzle> | null = null;
 
