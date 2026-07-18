@@ -1,12 +1,17 @@
 import { eq } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/mysql2";
-import { InsertUser, users } from "@drizzle/schema";
+import { InsertUser, users, products, cartItems, bookings } from "@/drizzle/schema";
 
 let _db: ReturnType<typeof drizzle> | null = null;
 
 // Lazily create the drizzle instance so local tooling can run without a DB.
 export async function getDb() {
-  if (!_db && process.env.DATABASE_URL) {
+  // For static deployment, return null - no database needed
+  if (!process.env.DATABASE_URL) {
+    return null;
+  }
+  
+  if (!_db) {
     try {
       _db = drizzle(process.env.DATABASE_URL);
     } catch (error) {
@@ -89,8 +94,6 @@ export async function getUserByOpenId(openId: string) {
 export async function getAllProducts(category?: string, limit: number = 12, offset: number = 0) {
   const db = await getDb();
   if (!db) return [];
-
-  const { products } = await import("@drizzle/schema");
   
   if (category) {
     return db.select().from(products).where(eq(products.category, category as any)).limit(limit).offset(offset);
@@ -103,7 +106,6 @@ export async function getProductBySlug(slug: string) {
   const db = await getDb();
   if (!db) return undefined;
 
-  const { products } = await import("@drizzle/schema");
   const result = await db.select().from(products).where(eq(products.slug, slug)).limit(1);
   return result.length > 0 ? result[0] : undefined;
 }
@@ -112,7 +114,6 @@ export async function getFeaturedProducts(limit: number = 6) {
   const db = await getDb();
   if (!db) return [];
 
-  const { products } = await import("@drizzle/schema");
   return db.select().from(products).limit(limit);
 }
 
@@ -121,7 +122,6 @@ export async function getUserCartItems(userId: number) {
   const db = await getDb();
   if (!db) return [];
 
-  const { cartItems, products } = await import("@drizzle/schema");
   return db
     .select({
       id: cartItems.id,
@@ -139,7 +139,6 @@ export async function addToCart(userId: number, productId: number, quantity: num
   const db = await getDb();
   if (!db) return undefined;
 
-  const { cartItems } = await import("@drizzle/schema");
   await db.insert(cartItems).values({ userId, productId, quantity });
   
   // Fetch and return the created item
@@ -151,7 +150,6 @@ export async function removeFromCart(cartItemId: number) {
   const db = await getDb();
   if (!db) return { success: false };
 
-  const { cartItems } = await import("@drizzle/schema");
   await db.delete(cartItems).where(eq(cartItems.id, cartItemId));
   return { success: true };
 }
@@ -160,7 +158,6 @@ export async function updateCartItemQuantity(cartItemId: number, quantity: numbe
   const db = await getDb();
   if (!db) return undefined;
 
-  const { cartItems } = await import("@drizzle/schema");
   await db.update(cartItems).set({ quantity }).where(eq(cartItems.id, cartItemId));
   
   // Fetch and return the updated item
@@ -172,7 +169,6 @@ export async function clearUserCart(userId: number) {
   const db = await getDb();
   if (!db) return false;
 
-  const { cartItems } = await import("@drizzle/schema");
   await db.delete(cartItems).where(eq(cartItems.userId, userId));
   return true;
 }
@@ -182,7 +178,6 @@ export async function createBooking(data: any) {
   const db = await getDb();
   if (!db) return undefined;
 
-  const { bookings } = await import("@drizzle/schema");
   await db.insert(bookings).values(data);
   
   // Fetch and return the created booking
@@ -194,7 +189,6 @@ export async function getUserBookings(userId: number) {
   const db = await getDb();
   if (!db) return [];
 
-  const { bookings } = await import("@drizzle/schema");
   return db.select().from(bookings).where(eq(bookings.userId, userId));
 }
 
@@ -202,6 +196,5 @@ export async function getAllBookings() {
   const db = await getDb();
   if (!db) return [];
 
-  const { bookings } = await import("@drizzle/schema");
   return db.select().from(bookings);
 }

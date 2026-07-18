@@ -1,5 +1,5 @@
 import { cookies } from "next/headers";
-import type { User } from "@drizzle/schema";
+import type { User } from "@/drizzle/schema";
 import { COOKIE_NAME } from "@/lib/const";
 
 export interface TrpcContext {

@@ -27,20 +27,7 @@ The root `vercel.json` is configured to build the Next.js app from the subdirect
 2. Click "Add New..." → "Project"
 3. Import from GitHub: `aryal05/KraftStudio_Nepal`
 
-### 2. Configure Environment Variables
-Add these environment variables in Vercel project settings:
-
-**Required:**
-- `DATABASE_URL` - Your MySQL/PlanetScale database connection string
-- `NODE_ENV` - Set to `production`
-
-**Optional (if using AWS S3):**
-- `AWS_ACCESS_KEY_ID`
-- `AWS_SECRET_ACCESS_KEY`
-- `AWS_REGION`
-- `AWS_S3_BUCKET`
-
-### 3. Build Settings
+### 2. Build Settings
 Vercel will automatically detect the `vercel.json` configuration. Verify these settings:
 
 - **Framework Preset**: Next.js
@@ -49,11 +36,11 @@ Vercel will automatically detect the `vercel.json` configuration. Verify these s
 - **Output Directory**: `revylo-nextjs/.next`
 - **Install Command**: `cd revylo-nextjs && pnpm install`
 
-### 4. Deploy
+### 3. Deploy
 Click "Deploy" and Vercel will:
 1. Clone the repository
 2. Install dependencies in `revylo-nextjs`
-3. Build the Next.js application
+3. Build the Next.js application (static pages)
 4. Deploy to production
 
 ## Troubleshooting
@@ -64,8 +51,6 @@ If you encounter build errors:
 1. **TypeScript errors**: The project uses `strict: false` for development. Check `revylo-nextjs/tsconfig.json`
 
 2. **Missing dependencies**: Ensure all dependencies are in `revylo-nextjs/package.json`
-
-3. **Database connection**: Verify `DATABASE_URL` environment variable is set correctly
 
 ### Local Testing
 Test the build locally before deploying:
@@ -78,14 +63,6 @@ pnpm start
 ```
 
 ## Post-Deployment
-
-### Database Setup
-Run database migrations after first deployment:
-
-```bash
-cd revylo-nextjs
-pnpm db:push
-```
 
 ### Custom Domain
 1. Go to Vercel project settings

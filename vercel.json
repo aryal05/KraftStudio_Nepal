@@ -3,9 +3,5 @@
   "outputDirectory": "revylo-nextjs/.next",
   "framework": "nextjs",
   "installCommand": "cd revylo-nextjs && pnpm install",
-  "devCommand": "cd revylo-nextjs && pnpm dev",
-  "env": {
-    "DATABASE_URL": "@database_url",
-    "NODE_ENV": "production"
-  }
+  "devCommand": "cd revylo-nextjs && pnpm dev"
 }
