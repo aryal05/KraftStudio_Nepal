@@ -7,7 +7,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import ErrorBoundary from "@/components/ErrorBoundary";
 
 export const metadata: Metadata = {
-  title: "REVYLO - Modern Furniture & Decor E-Commerce",
+  title: "KraftStudio - Modern Furniture & Decor E-Commerce",
   description: "Discover curated furniture, lighting, and decor for your perfect space",
 };
 
