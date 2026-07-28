@@ -128,9 +128,9 @@ export default function MessagesPage() {
     <AdminLayout>
       <div className="flex flex-col h-screen bg-[#f8f8f8]">
         {/* Page Header - Full Width */}
-        <div className="bg-white border-b border-gray-200 px-6 py-6">
+        <div className="bg-white border-b border-gray-200 px-4 sm:px-6 py-4 sm:py-6">
           <div className="flex items-center justify-between mb-1">
-            <h1 className="text-2xl font-bold text-gray-800" style={{ fontFamily: "'Inter', sans-serif" }}>
+            <h1 className="text-xl sm:text-2xl font-bold text-gray-800" style={{ fontFamily: "'Inter', sans-serif" }}>
               Messages
             </h1>
             <Button 
@@ -149,8 +149,8 @@ export default function MessagesPage() {
         </div>
 
         {/* Stats Row - Full Width */}
-        <div className="bg-white border-b border-gray-200 px-6 py-4">
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="bg-white border-b border-gray-200 px-4 sm:px-6 py-3 sm:py-4">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-4">
             {/* Total Card */}
             <motion.div
               whileHover={{ y: -2, scale: 1.02 }}
@@ -159,11 +159,11 @@ export default function MessagesPage() {
               className="bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-md cursor-pointer transition-all"
             >
               <div className="h-[3px] bg-[#6b9bd6] rounded-t-xl"></div>
-              <div className="p-5 text-center">
-                <div className="text-3xl font-bold text-slate-900 mb-1" style={{ fontFamily: "'Inter', sans-serif" }}>
+              <div className="p-3 sm:p-5 text-center">
+                <div className="text-2xl sm:text-3xl font-bold text-slate-900 mb-1" style={{ fontFamily: "'Inter', sans-serif" }}>
                   {totalMessages}
                 </div>
-                <div className="text-xs uppercase tracking-wide text-gray-500 whitespace-nowrap px-4" style={{ fontFamily: "'Inter', sans-serif" }}>
+                <div className="text-xs uppercase tracking-wide text-gray-500 whitespace-nowrap px-2 sm:px-4" style={{ fontFamily: "'Inter', sans-serif" }}>
                   Total
                 </div>
               </div>
@@ -226,11 +226,11 @@ export default function MessagesPage() {
         </div>
 
         {/* Main Content - Two Column Layout */}
-        <div className="flex flex-1 overflow-hidden">
+        <div className="flex flex-1 overflow-hidden relative">
           {/* Sidebar Left - Message List */}
-          <div className="w-[380px] bg-white border-r border-gray-200 flex flex-col shadow-sm">
+          <div className={`w-full sm:w-[380px] bg-white border-r border-gray-200 flex flex-col shadow-sm h-full transition-all duration-300 ${selectedMessage ? 'hidden sm:flex' : 'flex'}`}>
             {/* Search Bar */}
-          <div className="p-4 border-b border-gray-100 bg-white">
+          <div className="p-3 sm:p-4 border-b border-gray-100 bg-white flex-shrink-0">
             <div className="relative flex items-center gap-2">
               <label className="relative flex-1">
                 <input type="checkbox" className="peer sr-only" />
@@ -252,7 +252,7 @@ export default function MessagesPage() {
               <Button 
                 size="sm" 
                 variant="ghost" 
-                className="h-9 w-9 p-0 text-gray-500 hover:text-gray-700 hover:bg-gray-100"
+                className="h-9 w-9 p-0 text-gray-500 hover:text-gray-700 hover:bg-gray-100 hidden sm:flex"
               >
                 <RefreshCw className="w-4 h-4" />
               </Button>
@@ -260,7 +260,7 @@ export default function MessagesPage() {
           </div>
 
           {/* Filter Buttons */}
-          <div className="px-4 py-3 border-b border-gray-100 bg-white">
+          <div className="px-3 sm:px-4 py-2 sm:py-3 border-b border-gray-100 bg-white flex-shrink-0">
             <div className="flex items-center gap-2 overflow-x-auto scrollbar-hide">
               <button
                 onClick={() => setActiveFilter("all")}
@@ -320,7 +320,7 @@ export default function MessagesPage() {
             </div>
             
             {/* Pagination */}
-            <div className="flex items-center justify-between mt-3 pt-3 border-t border-gray-100">
+            <div className="flex items-center justify-between mt-3 pt-3 border-t border-gray-100 flex-shrink-0">
               <div className="flex items-center gap-1">
                 <Button 
                   size="sm" 
@@ -427,7 +427,7 @@ export default function MessagesPage() {
         </div>
 
         {/* Main Content - Message Detail */}
-        <div className="flex-1 bg-white overflow-y-auto">
+        <div className={`flex-1 bg-white overflow-hidden flex flex-col transition-all duration-300 ${selectedMessage ? 'flex' : 'hidden sm:flex'}`}>
           <AnimatePresence mode="wait">
             {selectedMessage ? (
               <motion.div 
@@ -436,22 +436,35 @@ export default function MessagesPage() {
                 animate={{ opacity: 1, x: 0 }} 
                 exit={{ opacity: 0, x: -20 }}
                 transition={{ duration: 0.3 }}
-                className="p-8"
+                className="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8"
               >
+                {/* Mobile Back Button */}
+                <div className="sm:hidden mb-4">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setSelectedMessage(null)}
+                    className="flex items-center gap-2 text-gray-600 hover:text-gray-900"
+                  >
+                    <ChevronLeft className="w-4 h-4" />
+                    Back to Messages
+                  </Button>
+                </div>
+
                 {/* Header with Actions */}
-                <div className="flex items-start justify-between mb-6 pb-6 border-b border-gray-100">
+                <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4 mb-6 pb-6 border-b border-gray-100">
                   <div className="flex-1">
-                    <div className="flex items-center gap-3 mb-2">
-                      <h1 className="text-3xl font-bold text-gray-900" style={{ fontFamily: "'Cormorant Garamond', serif" }}>
+                    <div className="flex items-center gap-2 sm:gap-3 mb-2 flex-wrap">
+                      <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900" style={{ fontFamily: "'Cormorant Garamond', serif" }}>
                         {selectedMessage.subject || "Customer Inquiry"}
                       </h1>
                       {selectedMessage.status === "unread" && (
-                        <Badge className="bg-[#6b9bd6] text-white text-xs px-3 py-1">
+                        <Badge className="bg-[#6b9bd6] text-white text-xs px-2 sm:px-3 py-1">
                           New
                         </Badge>
                       )}
                     </div>
-                    <p className="text-sm text-gray-500" style={{ fontFamily: "'Inter', sans-serif" }}>
+                    <p className="text-xs sm:text-sm text-gray-500" style={{ fontFamily: "'Inter', sans-serif" }}>
                       {format(new Date(selectedMessage.createdAt), "MMMM d, yyyy · h:mm a")}
                     </p>
                   </div>
@@ -484,24 +497,24 @@ export default function MessagesPage() {
                 </div>
 
                 {/* User Info Card - Top */}
-                <div className="bg-gradient-to-br from-[#f8f6f3] to-[#f2ede7] rounded-xl p-5 mb-6 border border-[#e8e4de]">
-                  <div className="flex items-center gap-4">
-                    <div className={`w-14 h-14 rounded-full flex items-center justify-center text-white font-bold text-lg shadow-md ${getAvatarColor(0)}`}>
+                <div className="bg-gradient-to-br from-[#f8f6f3] to-[#f2ede7] rounded-xl p-4 sm:p-5 mb-6 border border-[#e8e4de]">
+                  <div className="flex items-center gap-3 sm:gap-4">
+                    <div className={`w-12 h-12 sm:w-14 sm:h-14 rounded-full flex items-center justify-center text-white font-bold text-base sm:text-lg shadow-md flex-shrink-0 ${getAvatarColor(0)}`}>
                       {getInitials(selectedMessage.name)}
                     </div>
-                    <div className="flex-1">
-                      <p className="font-bold text-base text-gray-900 mb-1" style={{ fontFamily: "'Inter', sans-serif" }}>
+                    <div className="flex-1 min-w-0">
+                      <p className="font-bold text-sm sm:text-base text-gray-900 mb-1" style={{ fontFamily: "'Inter', sans-serif" }}>
                         {selectedMessage.name}
                       </p>
-                      <div className="flex items-center gap-4 text-sm text-gray-600">
+                      <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 text-xs sm:text-sm text-gray-600">
                         <span className="flex items-center gap-1.5">
-                          <Mail className="w-3.5 h-3.5 text-[#8b6f47]" />
-                          {selectedMessage.email}
+                          <Mail className="w-3.5 h-3.5 text-[#8b6f47] flex-shrink-0" />
+                          <span className="truncate">{selectedMessage.email}</span>
                         </span>
                         {selectedMessage.phone && (
                           <span className="flex items-center gap-1.5">
-                            <Phone className="w-3.5 h-3.5 text-[#8b6f47]" />
-                            {selectedMessage.phone}
+                            <Phone className="w-3.5 h-3.5 text-[#8b6f47] flex-shrink-0" />
+                            <span className="truncate">{selectedMessage.phone}</span>
                           </span>
                         )}
                       </div>
@@ -511,13 +524,13 @@ export default function MessagesPage() {
 
                 {/* Message Content */}
                 <div className="mb-6">
-                  <p className="text-sm text-gray-700 leading-relaxed whitespace-pre-wrap" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
+                  <p className="text-sm sm:text-base text-gray-700 leading-relaxed whitespace-pre-wrap" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
                     {selectedMessage.message}
                   </p>
                 </div>
 
                 {/* Info Cards - Side by Side Below Message */}
-                <div className="grid grid-cols-2 gap-4 mb-6">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 mb-6">
                   <motion.div 
                     whileHover={{ y: -2 }}
                     className="bg-gradient-to-br from-[#e8f2f9] to-[#d4e7f5] rounded-lg p-4 border border-[#c5ddef] shadow-sm transition-shadow hover:shadow-md"

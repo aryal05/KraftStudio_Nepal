@@ -50,19 +50,19 @@ export default function AdminDashboard() {
       <motion.div
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="bg-white border-b border-gray-200 px-8 py-6"
+        className="bg-white border-b border-gray-200 px-4 sm:px-6 lg:px-8 py-4 sm:py-6"
         style={{ fontFamily: "'Inter', 'Segoe UI', system-ui, sans-serif" }}
       >
-        <div className="flex items-center justify-between">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900" style={{ fontFamily: "'Poppins', sans-serif" }}>
+            <h1 className="text-2xl sm:text-3xl font-bold text-gray-900" style={{ fontFamily: "'Poppins', sans-serif" }}>
               Dashboard
             </h1>
-            <p className="text-gray-500 mt-1" style={{ fontFamily: "'Inter', sans-serif" }}>
+            <p className="text-gray-500 mt-1 text-sm sm:text-base" style={{ fontFamily: "'Inter', sans-serif" }}>
               Welcome back to KRAFTSTUDIO Admin
             </p>
           </div>
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-2 sm:gap-4">
             {/* Team avatars */}
             <div className="flex -space-x-2">
               <Avatar className="w-8 h-8 border-2 border-white">
@@ -81,20 +81,20 @@ export default function AdminDashboard() {
                 <PlusCircle className="w-4 h-4" />
               </button>
             </div>
-            <Button variant="ghost" size="icon" className="rounded-full">
+            <Button variant="ghost" size="icon" className="rounded-full hidden sm:flex">
               <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor">
                 <circle cx="12" cy="12" r="3" />
                 <path d="M12 1v6m0 6v6m-5-7h10" />
               </svg>
             </Button>
-            <Button variant="ghost" size="icon" className="rounded-full">
+            <Button variant="ghost" size="icon" className="rounded-full hidden sm:flex">
               <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor">
                 <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
                 <path d="M13.73 21a2 2 0 0 1-3.46 0" />
               </svg>
             </Button>
-            <Button className="bg-[#2d4a3e] hover:bg-[#234136] text-white rounded-lg">
-              <span className="mr-2">Export</span>
+            <Button className="bg-[#2d4a3e] hover:bg-[#234136] text-white rounded-lg text-sm">
+              <span className="mr-2 hidden sm:inline">Export</span>
               <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor">
                 <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
                 <polyline points="7 10 12 15 17 10" />
@@ -106,27 +106,27 @@ export default function AdminDashboard() {
       </motion.div>
 
       {/* Main Content */}
-      <div className="p-8 space-y-6">
+      <div className="p-4 sm:p-6 lg:p-8 space-y-6">
         {/* Stats Cards Row 1 */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6"
+          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6"
         >
           {/* New Net Income */}
           <Card className="bg-white border-0 shadow-sm hover:shadow-md transition-shadow">
-            <CardContent className="p-6">
+            <CardContent className="p-4 sm:p-6">
               <div className="flex items-start justify-between mb-4">
                 <div>
                   <p className="text-xs text-gray-500 uppercase tracking-wider mb-1">New Net Income</p>
-                  <h3 className="text-3xl font-bold text-gray-900" style={{ fontFamily: "'JetBrains Mono', 'Roboto Mono', 'SF Mono', monospace", fontVariantNumeric: "tabular-nums" }}>NPR 5,37,650</h3>
+                  <h3 className="text-2xl sm:text-3xl font-bold text-gray-900" style={{ fontFamily: "'JetBrains Mono', 'Roboto Mono', 'SF Mono', monospace", fontVariantNumeric: "tabular-nums" }}>NPR 5,37,650</h3>
                   <div className="flex items-center gap-1 mt-2">
                     <TrendingUp className="w-4 h-4 text-emerald-500" />
                     <span className="text-sm text-emerald-500 font-medium">10.5%</span>
                   </div>
                 </div>
-                <div className="w-10 h-10 rounded-full bg-emerald-50 flex items-center justify-center">
+                <div className="w-10 h-10 rounded-full bg-emerald-50 flex items-center justify-center flex-shrink-0">
                   <TrendingUp className="w-5 h-5 text-emerald-500" />
                 </div>
               </div>
@@ -139,17 +139,17 @@ export default function AdminDashboard() {
 
           {/* Average Sales */}
           <Card className="bg-white border-0 shadow-sm hover:shadow-md transition-shadow">
-            <CardContent className="p-6">
+            <CardContent className="p-4 sm:p-6">
               <div className="flex items-start justify-between mb-4">
                 <div>
                   <p className="text-xs text-gray-500 uppercase tracking-wider mb-1">Average Sales</p>
-                  <h3 className="text-3xl font-bold text-gray-900" style={{ fontFamily: "'JetBrains Mono', 'Roboto Mono', 'SF Mono', monospace", fontVariantNumeric: "tabular-nums" }}>NPR 1,25,490</h3>
+                  <h3 className="text-2xl sm:text-3xl font-bold text-gray-900" style={{ fontFamily: "'JetBrains Mono', 'Roboto Mono', 'SF Mono', monospace", fontVariantNumeric: "tabular-nums" }}>NPR 1,25,490</h3>
                   <div className="flex items-center gap-1 mt-2">
                     <TrendingUp className="w-4 h-4 text-emerald-500" />
                     <span className="text-sm text-emerald-500 font-medium">13.5%</span>
                   </div>
                 </div>
-                <div className="w-10 h-10 rounded-full bg-emerald-50 flex items-center justify-center">
+                <div className="w-10 h-10 rounded-full bg-emerald-50 flex items-center justify-center flex-shrink-0">
                   <ShoppingCart className="w-5 h-5 text-emerald-500" />
                 </div>
               </div>
@@ -162,17 +162,17 @@ export default function AdminDashboard() {
 
           {/* Total Orders */}
           <Card className="bg-white border-0 shadow-sm hover:shadow-md transition-shadow">
-            <CardContent className="p-6">
+            <CardContent className="p-4 sm:p-6">
               <div className="flex items-start justify-between mb-4">
                 <div>
                   <p className="text-xs text-gray-500 uppercase tracking-wider mb-1">Total Order</p>
-                  <h3 className="text-3xl font-bold text-gray-900" style={{ fontFamily: "'JetBrains Mono', 'Roboto Mono', 'SF Mono', monospace", fontVariantNumeric: "tabular-nums" }}>13,439</h3>
+                  <h3 className="text-2xl sm:text-3xl font-bold text-gray-900" style={{ fontFamily: "'JetBrains Mono', 'Roboto Mono', 'SF Mono', monospace", fontVariantNumeric: "tabular-nums" }}>13,439</h3>
                   <div className="flex items-center gap-1 mt-2">
                     <TrendingDown className="w-4 h-4 text-red-500" />
                     <span className="text-sm text-red-500 font-medium">0.5%</span>
                   </div>
                 </div>
-                <div className="w-10 h-10 rounded-full bg-emerald-50 flex items-center justify-center">
+                <div className="w-10 h-10 rounded-full bg-emerald-50 flex items-center justify-center flex-shrink-0">
                   <Package className="w-5 h-5 text-emerald-500" />
                 </div>
               </div>
@@ -185,17 +185,17 @@ export default function AdminDashboard() {
 
           {/* Impression */}
           <Card className="bg-white border-0 shadow-sm hover:shadow-md transition-shadow">
-            <CardContent className="p-6">
+            <CardContent className="p-4 sm:p-6">
               <div className="flex items-start justify-between mb-4">
                 <div>
                   <p className="text-xs text-gray-500 uppercase tracking-wider mb-1">Impression</p>
-                  <h3 className="text-3xl font-bold text-gray-900" style={{ fontFamily: "'JetBrains Mono', 'Roboto Mono', 'SF Mono', monospace", fontVariantNumeric: "tabular-nums" }}>349K</h3>
+                  <h3 className="text-2xl sm:text-3xl font-bold text-gray-900" style={{ fontFamily: "'JetBrains Mono', 'Roboto Mono', 'SF Mono', monospace", fontVariantNumeric: "tabular-nums" }}>349K</h3>
                   <div className="flex items-center gap-1 mt-2">
                     <TrendingDown className="w-4 h-4 text-red-500" />
                     <span className="text-sm text-red-500 font-medium">25.1%</span>
                   </div>
                 </div>
-                <div className="w-10 h-10 rounded-full bg-emerald-50 flex items-center justify-center">
+                <div className="w-10 h-10 rounded-full bg-emerald-50 flex items-center justify-center flex-shrink-0">
                   <Eye className="w-5 h-5 text-emerald-500" />
                 </div>
               </div>
@@ -221,13 +221,13 @@ export default function AdminDashboard() {
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-xs text-gray-500 uppercase tracking-wider mb-1">Overall Sales</p>
-                    <h3 className="text-3xl font-bold text-gray-900" style={{ fontFamily: "'JetBrains Mono', 'Roboto Mono', 'SF Mono', monospace", fontVariantNumeric: "tabular-nums" }}>NPR 6,33,320</h3>
+                    <h3 className="text-2xl sm:text-3xl font-bold text-gray-900" style={{ fontFamily: "'JetBrains Mono', 'Roboto Mono', 'SF Mono', monospace", fontVariantNumeric: "tabular-nums" }}>NPR 6,33,320</h3>
                     <div className="flex items-center gap-1 mt-1">
                       <TrendingUp className="w-4 h-4 text-emerald-500" />
                       <span className="text-sm text-emerald-500 font-medium">10.5%</span>
                     </div>
                   </div>
-                  <div className="w-10 h-10 rounded-full bg-emerald-50 flex items-center justify-center">
+                  <div className="w-10 h-10 rounded-full bg-emerald-50 flex items-center justify-center flex-shrink-0">
                     <svg className="w-5 h-5 text-emerald-500" viewBox="0 0 24 24" fill="none" stroke="currentColor">
                       <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
                     </svg>
@@ -340,13 +340,13 @@ export default function AdminDashboard() {
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-xs text-gray-500 uppercase tracking-wider mb-1">Conversion Rate</p>
-                    <h3 className="text-3xl font-bold text-gray-900" style={{ fontFamily: "'JetBrains Mono', 'Roboto Mono', 'SF Mono', monospace", fontVariantNumeric: "tabular-nums" }}>4.55%</h3>
+                    <h3 className="text-2xl sm:text-3xl font-bold text-gray-900" style={{ fontFamily: "'JetBrains Mono', 'Roboto Mono', 'SF Mono', monospace", fontVariantNumeric: "tabular-nums" }}>4.55%</h3>
                     <div className="flex items-center gap-1 mt-1">
                       <TrendingUp className="w-4 h-4 text-emerald-500" />
                       <span className="text-sm text-emerald-500 font-medium">0.5%</span>
                     </div>
                   </div>
-                  <div className="w-10 h-10 rounded-full bg-emerald-50 flex items-center justify-center">
+                  <div className="w-10 h-10 rounded-full bg-emerald-50 flex items-center justify-center flex-shrink-0">
                     <svg className="w-5 h-5 text-emerald-500" viewBox="0 0 24 24" fill="none" stroke="currentColor">
                       <polyline points="22 12 18 12 15 21 9 3 6 12 2 12" />
                     </svg>
@@ -389,7 +389,7 @@ export default function AdminDashboard() {
             transition={{ delay: 0.4 }}
           >
             <Card className="bg-white border-0 shadow-sm">
-              <CardContent className="p-6">
+              <CardContent className="p-4 sm:p-6">
                 <div className="flex items-start justify-between mb-4">
                   <div>
                     <p className="text-xs text-gray-500 uppercase tracking-wider mb-2">Upgrade</p>

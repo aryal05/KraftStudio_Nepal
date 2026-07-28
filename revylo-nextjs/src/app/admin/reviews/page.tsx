@@ -150,38 +150,42 @@ export default function ReviewsPage() {
 
   return (
     <AdminLayout>
-      <div className="p-8 bg-[#F8FAFC] min-h-screen">
+      <div className="p-4 sm:p-6 lg:p-8 bg-[#F8FAFC] min-h-screen">
         {/* Header */}
-        <div className="flex items-center justify-between mb-8">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6 sm:mb-8">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900 font-serif">Review Management</h1>
-            <p className="text-slate-500 mt-2 text-sm">Manage and moderate product reviews</p>
+            <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 font-serif">Review Management</h1>
+            <p className="text-slate-500 mt-1 sm:mt-2 text-sm">Manage and moderate product reviews</p>
           </div>
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 sm:gap-3 flex-wrap">
             {reviews.filter((r: any) => !r.isApproved).length > 0 && (
               <Button
                 onClick={handleBulkApprove}
                 variant="outline"
-                className="flex items-center gap-2 rounded-lg border-green-200 text-green-600 hover:bg-green-50 transition-all duration-200"
+                className="flex items-center gap-2 rounded-lg border-green-200 text-green-600 hover:bg-green-50 transition-all duration-200 text-sm"
               >
                 <Check className="w-4 h-4" />
-                Approve All ({reviews.filter((r: any) => !r.isApproved).length})
+                <span className="hidden sm:inline">Approve All</span>
+                <span className="sm:hidden">All</span>
+                <span className="hidden sm:inline">({reviews.filter((r: any) => !r.isApproved).length})</span>
               </Button>
             )}
             {selectedReviews.size > 0 && (
               <Button
                 onClick={handleBulkDelete}
                 variant="outline"
-                className="flex items-center gap-2 rounded-lg border-red-200 text-red-600 hover:bg-red-50 transition-all duration-200"
+                className="flex items-center gap-2 rounded-lg border-red-200 text-red-600 hover:bg-red-50 transition-all duration-200 text-sm"
               >
                 <Trash2 className="w-4 h-4" />
-                Delete Selected ({selectedReviews.size})
+                <span className="hidden sm:inline">Delete Selected</span>
+                <span className="sm:hidden">Delete</span>
+                <span className="hidden sm:inline">({selectedReviews.size})</span>
               </Button>
             )}
             <Button
               onClick={() => refetch()}
               variant="outline"
-              className="flex items-center gap-2 rounded-lg border-gray-200 hover:bg-gray-100 transition-all duration-200"
+              className="flex items-center gap-2 rounded-lg border-gray-200 hover:bg-gray-100 transition-all duration-200 text-sm"
             >
               <RefreshCw className="w-4 h-4" />
               Refresh
@@ -190,46 +194,46 @@ export default function ReviewsPage() {
         </div>
 
         {/* Stats */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6 mb-6 sm:mb-8">
           <Card className="border border-gray-200 shadow-sm rounded-xl hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 border-l-4 border-l-blue-500">
-            <CardContent className="p-6">
+            <CardContent className="p-4 sm:p-6">
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm text-slate-500 font-medium">Total Reviews</p>
-                  <p className="text-3xl font-bold text-gray-900 mt-1">{reviews.length}</p>
+                  <p className="text-2xl sm:text-3xl font-bold text-gray-900 mt-1">{reviews.length}</p>
                 </div>
-                <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
-                  <Star className="w-6 h-6 text-blue-600" />
+                <div className="w-10 h-10 sm:w-12 sm:h-12 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0">
+                  <Star className="w-5 h-5 sm:w-6 sm:h-6 text-blue-600" />
                 </div>
               </div>
             </CardContent>
           </Card>
           <Card className="border border-gray-200 shadow-sm rounded-xl hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 border-l-4 border-l-green-500">
-            <CardContent className="p-6">
+            <CardContent className="p-4 sm:p-6">
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm text-slate-500 font-medium">Approved</p>
-                  <p className="text-3xl font-bold text-green-600 mt-1">
+                  <p className="text-2xl sm:text-3xl font-bold text-green-600 mt-1">
                     {reviews.filter((r: any) => r.isApproved).length}
                   </p>
                 </div>
-                <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center">
-                  <Check className="w-6 h-6 text-green-600" />
+                <div className="w-10 h-10 sm:w-12 sm:h-12 bg-green-100 rounded-full flex items-center justify-center flex-shrink-0">
+                  <Check className="w-5 h-5 sm:w-6 sm:h-6 text-green-600" />
                 </div>
               </div>
             </CardContent>
           </Card>
           <Card className="border border-gray-200 shadow-sm rounded-xl hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 border-l-4 border-l-amber-500">
-            <CardContent className="p-6">
+            <CardContent className="p-4 sm:p-6">
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm text-slate-500 font-medium">Pending</p>
-                  <p className="text-3xl font-bold text-amber-600 mt-1">
+                  <p className="text-2xl sm:text-3xl font-bold text-amber-600 mt-1">
                     {reviews.filter((r: any) => !r.isApproved).length}
                   </p>
                 </div>
-                <div className="w-12 h-12 bg-amber-100 rounded-full flex items-center justify-center">
-                  <X className="w-6 h-6 text-amber-600" />
+                <div className="w-10 h-10 sm:w-12 sm:h-12 bg-amber-100 rounded-full flex items-center justify-center flex-shrink-0">
+                  <X className="w-5 h-5 sm:w-6 sm:h-6 text-amber-600" />
                 </div>
               </div>
             </CardContent>
@@ -270,11 +274,11 @@ export default function ReviewsPage() {
                 transition={{ duration: 0.3 }}
               >
                 <Card className={`border border-gray-200 shadow-sm rounded-xl hover:shadow-md transition-all duration-200 ${selectedReviews.has(review.id) ? 'ring-2 ring-blue-500' : ''}`}>
-                  <CardContent className="p-6">
-                    <div className="flex items-start gap-4">
+                  <CardContent className="p-4 sm:p-6">
+                    <div className="flex items-start gap-3 sm:gap-4">
                       <button
                         onClick={() => toggleSelectReview(review.id)}
-                        className="mt-1"
+                        className="mt-1 flex-shrink-0"
                       >
                         {selectedReviews.has(review.id) ? (
                           <CheckSquare2 className="w-5 h-5 text-blue-600" />
@@ -282,10 +286,10 @@ export default function ReviewsPage() {
                           <Square className="w-5 h-5 text-gray-400" />
                         )}
                       </button>
-                      <div className="flex-1">
+                      <div className="flex-1 min-w-0">
                         {editingReview?.id === review.id ? (
-                          <div className="space-y-4">
-                            <div className="grid grid-cols-2 gap-4">
+                          <div className="space-y-3 sm:space-y-4">
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                               <div>
                                 <label className="block text-sm font-medium text-slate-700 mb-1">Name</label>
                                 <input

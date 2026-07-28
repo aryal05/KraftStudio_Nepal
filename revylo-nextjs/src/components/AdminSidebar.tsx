@@ -52,7 +52,7 @@ const menuItems = [
   { icon: MessageCircle, label: "Messages", href: "/admin/messages", badge: true },
 ];
 
-export default function AdminSidebar() {
+export default function AdminSidebar({ onCloseMobile }: { onCloseMobile?: () => void }) {
   const pathname = usePathname();
   const router = useRouter();
   const { data: unreadCount = 0 } = trpc.messages.getUnreadCount.useQuery();
@@ -65,12 +65,18 @@ export default function AdminSidebar() {
     router.push("/admin/login");
   };
 
+  const handleNavigation = (href: string) => {
+    if (onCloseMobile) {
+      onCloseMobile();
+    }
+  };
+
   return (
     <motion.div
       initial={{ x: -280 }}
       animate={{ x: 0 }}
       transition={{ duration: 0.4, ease: "easeOut" }}
-      className="w-[280px] bg-[#2d4a3e] h-screen fixed left-0 top-0 flex flex-col text-white overflow-y-auto"
+      className="w-[280px] bg-[#2d4a3e] h-screen fixed left-0 top-0 flex flex-col text-white"
       style={{ fontFamily: "'Inter', 'Segoe UI', system-ui, sans-serif" }}
     >
       {/* Logo */}
@@ -96,7 +102,7 @@ export default function AdminSidebar() {
       </div>
 
       {/* Main Menu */}
-      <div className="px-4 py-6 flex-1">
+      <div className="px-4 py-6 flex-1 overflow-y-auto">
         <h3 className="text-xs font-semibold text-white/60 uppercase tracking-wider mb-3 px-3" style={{ fontFamily: "'Inter', sans-serif" }}>
           Main Menu
         </h3>
@@ -107,7 +113,7 @@ export default function AdminSidebar() {
             const badgeCount = item.badge ? unreadCount : 0;
             
             return (
-              <Link key={item.href} href={item.href}>
+              <Link key={item.href} href={item.href} onClick={() => handleNavigation(item.href)}>
                 <motion.div
                   whileHover={{ x: 4 }}
                   whileTap={{ scale: 0.98 }}

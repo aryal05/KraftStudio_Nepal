@@ -140,6 +140,7 @@ export default function Navigation() {
         animate={{ y: 0 }}
         transition={{ duration: 0.6, ease: "easeOut" }}
         className="fixed bottom-0 left-0 right-0 z-50 lg:hidden bg-white border-t border-gray-200 shadow-lg"
+        style={{ '--bottom-nav-height': '64px' } as React.CSSProperties}
       >
         <div className="flex items-center justify-around px-2 py-2">
           {staticNavItems.map((item) => (

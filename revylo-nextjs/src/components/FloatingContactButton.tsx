@@ -29,7 +29,7 @@ export default function FloatingContactButton() {
   ];
 
   return (
-    <div className="fixed bottom-6 right-6 z-50 flex flex-col items-end gap-3">
+    <div className="fixed bottom-[80px] sm:bottom-6 right-4 sm:right-6 z-[60] flex flex-col items-end gap-3">
       <AnimatePresence>
         {isOpen && (
           <motion.div

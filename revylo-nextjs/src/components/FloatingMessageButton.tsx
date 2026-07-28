@@ -16,13 +16,13 @@ export default function FloatingMessageButton() {
         initial={{ scale: 0, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
         transition={{ delay: 1, duration: 0.3 }}
-        className="fixed bottom-8 right-8 z-50"
+        className="fixed bottom-[80px] sm:bottom-8 right-4 sm:right-8 z-[60]"
       >
         <motion.button
           whileHover={{ scale: 1.1 }}
           whileTap={{ scale: 0.9 }}
           onClick={() => setIsOpen(!isOpen)}
-          className="relative w-16 h-16 bg-gray-900 hover:bg-gray-800 text-white rounded-full shadow-2xl flex items-center justify-center transition-colors"
+          className="relative w-14 h-14 sm:w-16 sm:h-16 bg-gray-900 hover:bg-gray-800 text-white rounded-full shadow-2xl flex items-center justify-center transition-colors"
         >
           <AnimatePresence mode="wait">
             {isOpen ? (
@@ -65,7 +65,7 @@ export default function FloatingMessageButton() {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 20, scale: 0.9 }}
             transition={{ duration: 0.3 }}
-            className="fixed bottom-28 right-8 z-40 w-80"
+            className="fixed bottom-[84px] sm:bottom-28 right-4 sm:right-8 z-[55] w-80"
           >
             <Card className="p-6 shadow-2xl border-0 bg-white">
               {/* Header */}

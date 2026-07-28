@@ -113,23 +113,23 @@ export default function AdminOrders() {
       <motion.div
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="bg-white border-b border-gray-200 px-8 py-6"
+        className="bg-white border-b border-gray-200 px-4 sm:px-6 lg:px-8 py-4 sm:py-6"
       >
-        <div className="flex items-center justify-between">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900">Orders</h1>
-            <p className="text-gray-500 mt-1">{filteredOrders.length} total orders</p>
+            <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">Orders</h1>
+            <p className="text-gray-500 mt-1 text-sm sm:text-base">{filteredOrders.length} total orders</p>
           </div>
         </div>
       </motion.div>
 
       {/* Stats Cards */}
-      <div className="p-8">
+      <div className="p-4 sm:p-6 lg:p-8">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
-          className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8"
+          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-6 sm:mb-8"
         >
           {stats.map((stat, index) => (
             <motion.div
@@ -137,11 +137,11 @@ export default function AdminOrders() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.1 + index * 0.05 }}
-              className="bg-white rounded-lg p-6 shadow-sm hover:shadow-md transition-shadow"
+              className="bg-white rounded-lg p-4 sm:p-6 shadow-sm hover:shadow-md transition-shadow"
             >
               <p className="text-sm text-gray-500 mb-2">{stat.label}</p>
               <div className="flex items-end justify-between">
-                <h3 className="text-3xl font-bold text-gray-900">{stat.value}</h3>
+                <h3 className="text-2xl sm:text-3xl font-bold text-gray-900">{stat.value}</h3>
                 <span className={`text-sm font-medium ${stat.positive ? 'text-emerald-600' : 'text-gray-600'}`}>
                   {stat.change}
                 </span>
@@ -155,20 +155,20 @@ export default function AdminOrders() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
-          className="bg-white rounded-lg shadow-sm p-6 mb-8"
+          className="bg-white rounded-lg shadow-sm p-4 sm:p-6 mb-6 sm:mb-8"
         >
-          <div className="flex flex-col md:flex-row gap-4 items-center">
+          <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 items-stretch sm:items-center">
             <div className="relative flex-1 w-full">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 sm:w-5 sm:h-5 text-gray-400" />
               <Input
                 placeholder="Search by order ID, customer name or email..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-10 bg-gray-50 border-0"
+                className="pl-9 sm:pl-10 bg-gray-50 border-0"
               />
             </div>
             <Select value={statusFilter} onValueChange={setStatusFilter}>
-              <SelectTrigger className="w-full md:w-[180px] bg-gray-50 border-0">
+              <SelectTrigger className="w-full sm:w-[180px] bg-gray-50 border-0">
                 <SelectValue placeholder="Filter by status" />
               </SelectTrigger>
               <SelectContent>
@@ -180,7 +180,7 @@ export default function AdminOrders() {
                 <SelectItem value="cancelled">Cancelled</SelectItem>
               </SelectContent>
             </Select>
-            <Button variant="ghost" size="icon">
+            <Button variant="ghost" size="icon" className="hidden sm:flex">
               <Filter className="w-4 h-4" />
             </Button>
           </div>

@@ -171,12 +171,12 @@ export default function CategoriesPage() {
 
   return (
     <AdminLayout>
-      <div className="p-8">
+      <div className="p-4 sm:p-6 lg:p-8">
         {/* Header */}
-        <div className="flex items-center justify-between mb-8">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6 sm:mb-8">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900">Category Management</h1>
-            <p className="text-gray-600 mt-2">Create and manage product categories</p>
+            <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">Category Management</h1>
+            <p className="text-gray-600 mt-1 sm:mt-2 text-sm sm:text-base">Create and manage product categories</p>
           </div>
 
           <Dialog open={isDialogOpen} onOpenChange={(open) => {
@@ -204,10 +204,10 @@ export default function CategoriesPage() {
 
               <form onSubmit={handleSubmit} className="flex flex-col" style={{ height: 'calc(90vh - 180px)' }}>
                 {/* Form Body - Scrollable */}
-                <div className="flex-1 overflow-y-auto px-8 py-6">
-                  <div className="space-y-6">
+                <div className="flex-1 overflow-y-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6">
+                  <div className="space-y-4 sm:space-y-6">
                     {/* Name + Slug (Two Columns) */}
-                    <div className="grid grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <div>
                         <label htmlFor="name" className="block text-sm font-medium text-[#334155] mb-2">
                           Category Name <span className="text-red-500">*</span>
@@ -422,7 +422,7 @@ export default function CategoriesPage() {
                 </div>
 
                 {/* Footer - Fixed at Bottom */}
-                <div className="flex items-center justify-end gap-3 px-8 py-4 border-t border-gray-200 bg-gray-50">
+                <div className="flex items-center justify-end gap-3 px-4 sm:px-6 lg:px-8 py-4 border-t border-gray-200 bg-gray-50">
                   <Button
                     type="button"
                     variant="outline"
@@ -455,7 +455,7 @@ export default function CategoriesPage() {
         </div>
 
         {/* Categories Grid */}
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
           {categories.map((category: any) => (
             <motion.div
               key={category.id}

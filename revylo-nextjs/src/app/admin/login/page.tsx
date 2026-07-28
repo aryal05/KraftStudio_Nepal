@@ -70,15 +70,15 @@ export default function AdminLoginPage() {
         </div>
 
         {/* Login Card */}
-        <div className="bg-white rounded-2xl shadow-2xl p-8">
+        <div className="bg-white rounded-2xl shadow-2xl p-6 sm:p-8">
           <div className="text-center mb-6">
             <div className="w-16 h-16 bg-[#2d4a3e]/10 rounded-full flex items-center justify-center mx-auto mb-4">
               <Lock className="w-8 h-8 text-[#2d4a3e]" />
             </div>
-            <h1 className="text-2xl font-bold text-gray-900 mb-2">
+            <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">
               Admin Login
             </h1>
-            <p className="text-gray-600">
+            <p className="text-gray-600 text-sm sm:text-base">
               Enter your credentials to access the admin panel
             </p>
           </div>
@@ -138,7 +138,7 @@ export default function AdminLoginPage() {
             {/* Submit Button */}
             <Button
               type="submit"
-              className="w-full bg-[#2d4a3e] hover:bg-[#234136] text-white"
+              className="w-full h-12 sm:h-14 text-sm sm:text-base font-['Syne'] rounded-xl bg-[#2d4a3e] hover:bg-[#234136] text-white"
               size="lg"
               disabled={loginMutation.isPending}
             >
