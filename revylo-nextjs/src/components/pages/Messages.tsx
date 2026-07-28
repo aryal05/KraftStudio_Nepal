@@ -23,7 +23,7 @@ const messages = [
     unread: true,
     starred: false,
     urgent: false,
-    avatar: "/api/placeholder/40/40",
+    avatar: "",
     avatarBg: "bg-yellow-500"
   },
   {
@@ -38,7 +38,7 @@ const messages = [
     unread: false,
     starred: false,
     urgent: false,
-    avatar: "/api/placeholder/40/40",
+    avatar: "",
     avatarBg: "bg-gray-500"
   },
   {
@@ -53,7 +53,7 @@ const messages = [
     unread: false,
     starred: false,
     urgent: false,
-    avatar: "/api/placeholder/40/40",
+    avatar: "",
     avatarBg: "bg-blue-500"
   },
 ];

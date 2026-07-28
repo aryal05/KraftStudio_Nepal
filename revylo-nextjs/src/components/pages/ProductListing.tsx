@@ -674,7 +674,7 @@ export default function ProductListing() {
                   >
                     {sortedProducts.map((product, index) => (
                       <ScaleFade key={product.id} delay={index * 0.05}>
-                        <Link href={`/product/${product.id}`}>
+                        <Link href={`/product/${(product as any).slug || product.id}`}>
                           <motion.div
                             whileHover={{ y: -8 }}
                             transition={{ duration: 0.3 }}

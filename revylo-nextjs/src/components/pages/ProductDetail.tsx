@@ -11,79 +11,15 @@ import Footer from "@/components/Footer";
 import AnimatedSection from "@/components/AnimatedSection";
 import PageTransition from "@/components/PageTransition";
 import { toast } from "sonner";
+import { trpc } from "@/lib/trpc";
 
-// Sample product data
-const productsDB: Record<string, any> = {
-  "1": {
-    id: 1,
-    name: "Modern Leather Sofa",
-    slug: "modern-leather-sofa",
-    price: 129900,
-    originalPrice: 159900,
-    rating: 450,
-    reviewCount: 128,
-    inStock: 1,
-    stockQuantity: 15,
-    category: "furniture",
-    imageUrl: "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=800&h=600&fit=crop",
-    galleryImages: [
-      "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=800&h=600&fit=crop",
-      "https://images.unsplash.com/photo-1493663284031-b7e3aefcae8e?w=800&h=600&fit=crop",
-      "https://images.unsplash.com/photo-1540932239986-30128078f3c5?w=800&h=600&fit=crop",
-    ],
-    description: "A luxurious modern leather sofa that combines comfort with contemporary design. Perfect for living rooms, this sofa features premium leather upholstery, sturdy wooden legs, and plush cushioning for ultimate relaxation.",
-    shortDescription: "Luxurious modern leather sofa with premium upholstery and plush cushioning."
-  },
-  "2": {
-    id: 2,
-    name: "Industrial Pendant Light",
-    slug: "industrial-pendant-light",
-    price: 18900,
-    originalPrice: 22900,
-    rating: 420,
-    reviewCount: 89,
-    inStock: 1,
-    stockQuantity: 25,
-    category: "lighting",
-    imageUrl: "https://images.unsplash.com/photo-1513506003901-1e6a229e2d15?w=800&h=600&fit=crop",
-    galleryImages: [
-      "https://images.unsplash.com/photo-1513506003901-1e6a229e2d15?w=800&h=600&fit=crop",
-      "https://images.unsplash.com/photo-1524484485831-a92ffc0de03f?w=800&h=600&fit=crop",
-    ],
-    description: "An industrial-style pendant light that adds character to any space. Features a metal shade, adjustable height, and warm LED lighting perfect for dining areas or kitchen islands.",
-    shortDescription: "Industrial-style pendant light with metal shade and warm LED lighting."
-  },
-  "3": {
-    id: 3,
-    name: "Scandinavian Bookshelf",
-    slug: "scandinavian-bookshelf",
-    price: 69900,
-    originalPrice: 84900,
-    rating: 480,
-    reviewCount: 156,
-    inStock: 1,
-    stockQuantity: 8,
-    category: "furniture",
-    imageUrl: "https://images.unsplash.com/photo-1594620302200-9a762244a156?w=800&h=600&fit=crop",
-    galleryImages: [
-      "https://images.unsplash.com/photo-1594620302200-9a762244a156?w=800&h=600&fit=crop",
-      "https://images.unsplash.com/photo-1595428774223-ef52624120d2?w=800&h=600&fit=crop",
-    ],
-    description: "A minimalist Scandinavian bookshelf with clean lines and natural wood finish. Perfect for displaying books, plants, and decorative items while maintaining a clutter-free aesthetic.",
-    shortDescription: "Minimalist Scandinavian bookshelf with clean lines and natural wood finish."
+// Helper function to parse gallery images from colors array
+function parseGalleryImages(colors: any[] | null): string[] {
+  if (!colors || colors.length === 0) return [];
+  if (colors[0] && colors[0].images && Array.isArray(colors[0].images)) {
+    return colors[0].images;
   }
-};
-
-// Helper function to parse gallery images
-function parseGalleryImages(galleryImages: string[] | string | null): string[] {
-  if (!galleryImages) return [];
-  if (Array.isArray(galleryImages)) return galleryImages;
-  try {
-    const parsed = JSON.parse(galleryImages);
-    return Array.isArray(parsed) ? parsed : [];
-  } catch {
-    return [];
-  }
+  return [];
 }
 
 // Helper function to format price from cents
@@ -97,44 +33,81 @@ function formatRating(rating: number | null): number {
   return rating / 100;
 }
 
-export default function ProductDetail({ productId }: { productId: string }) {
+export default function ProductDetail({ productSlug }: { productSlug: string }) {
   const [quantity, setQuantity] = useState(1);
   const [selectedImage, setSelectedImage] = useState(0);
   const [isWishlisted, setIsWishlisted] = useState(false);
   const [product, setProduct] = useState<any>(undefined);
   const [relatedProducts, setRelatedProducts] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [showReviewForm, setShowReviewForm] = useState(false);
+  const [reviewForm, setReviewForm] = useState({
+    name: '',
+    email: '',
+    rating: 5,
+    comment: ''
+  });
 
-  // Load product data on mount or when productId changes
+  // Check if the slug is actually a numeric ID
+  const isNumericId = /^\d+$/.test(productSlug);
+  const productId = isNumericId ? parseInt(productSlug) : null;
+
+  const { data: dbProduct, isLoading: isProductLoading } = isNumericId
+    ? trpc.products.getById.useQuery({ id: productId! }, { enabled: !!productId })
+    : trpc.products.getBySlug.useQuery({ slug: productSlug }, { enabled: !!productSlug });
+
+  const { data: dbProducts = [] } = trpc.products.getAll.useQuery({ limit: 100 });
+  const { data: categories = [] } = trpc.categories.getAll.useQuery();
+  const { data: reviews = [] } = trpc.reviews.getByProduct.useQuery(
+    { productId: product?.id || 0 },
+    { enabled: !!product?.id }
+  );
+  const createReviewMutation = trpc.reviews.create.useMutation();
+
+  // Load product data when dbProduct changes
   useEffect(() => {
-    setIsLoading(true);
-    
-    // Get product by ID
-    const foundProduct = productsDB[productId] || productsDB["1"];
-    
-    setProduct(foundProduct);
-    
-    // Load related products (sample data)
-    if (foundProduct) {
-      const related = Object.values(productsDB)
-        .filter((p: any) => p.id !== foundProduct.id)
+    if (dbProduct) {
+      setProduct(dbProduct);
+      
+      // Load related products from same category
+      const related = dbProducts
+        .filter((p: any) => p.categoryId === dbProduct.categoryId && p.id !== dbProduct.id)
         .slice(0, 4);
       setRelatedProducts(related);
+      
+      setIsLoading(false);
+    } else if (!isProductLoading) {
+      setIsLoading(false);
     }
-    
-    setIsLoading(false);
-    setSelectedImage(0);
-  }, [productId]);
+  }, [dbProduct, dbProducts, isProductLoading]);
 
   // Parse gallery images
-  const galleryImages = product ? parseGalleryImages(product.galleryImages) : [];
-  const allImages = product?.imageUrl 
-    ? [product.imageUrl, ...galleryImages]
-    : galleryImages;
+  const galleryImages = product ? parseGalleryImages(product.colors) : [];
+  const allImages = galleryImages.length > 0 ? galleryImages : [];
 
   const handleAddToCart = async () => {
     if (!product) return;
     toast.success("Added to cart!");
+  };
+
+  const handleReviewSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!product) return;
+
+    try {
+      await createReviewMutation.mutateAsync({
+        productId: product.id,
+        name: reviewForm.name,
+        email: reviewForm.email,
+        rating: reviewForm.rating,
+        comment: reviewForm.comment,
+      });
+      toast.success("Review submitted! It will be visible after approval.");
+      setShowReviewForm(false);
+      setReviewForm({ name: '', email: '', rating: 5, comment: '' });
+    } catch (error: any) {
+      toast.error(error.message || "Failed to submit review");
+    }
   };
 
   // Loading state
@@ -176,10 +149,15 @@ export default function ProductDetail({ productId }: { productId: string }) {
   }
 
   const formattedPrice = formatPrice(product.price);
-  const formattedOriginalPrice = product.originalPrice ? formatPrice(product.originalPrice) : null;
-  const savings = product.originalPrice ? formatPrice(product.originalPrice - product.price) : null;
-  const rating = formatRating(product.rating);
-  const isInStock = product.inStock === 1;
+  const formattedOriginalPrice = null; // No originalPrice in database schema
+  const savings = null;
+  // Calculate average rating from reviews
+  const avgRating = reviews.length > 0
+    ? reviews.reduce((sum: number, r: any) => sum + (r.rating / 10), 0) / reviews.length
+    : formatRating(product.rating);
+  const rating = avgRating;
+  const isInStock = product.inStock;
+  const categoryName = categories.find((c: any) => c.id === product.categoryId)?.name || 'Products';
 
   return (
     <PageTransition>
@@ -189,13 +167,13 @@ export default function ProductDetail({ productId }: { productId: string }) {
         {/* Breadcrumb */}
         <div className="border-b border-gray-200 bg-gray-50">
           <div className="max-w-7xl mx-auto px-6 py-4">
-            <Link href="/furniture">
+            <Link href="/categories">
               <motion.div
                 whileHover={{ x: -5 }}
                 className="flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors"
               >
                 <ChevronLeft className="w-4 h-4" />
-                Back to Furniture
+                Back to {categoryName}
               </motion.div>
             </Link>
           </div>
@@ -279,7 +257,7 @@ export default function ProductDetail({ productId }: { productId: string }) {
                       ))}
                     </div>
                     <span className="text-gray-600 font-medium">
-                      {rating.toFixed(1)} ({product.reviewCount || 0} reviews)
+                      {rating.toFixed(1)} ({reviews.length} reviews)
                     </span>
                   </div>
 
@@ -305,7 +283,7 @@ export default function ProductDetail({ productId }: { productId: string }) {
                     {isInStock ? (
                       <p className="flex items-center gap-2 text-green-600 font-semibold">
                         <Check className="w-5 h-5" />
-                        In Stock ({product.stockQuantity} available)
+                        Available
                       </p>
                     ) : (
                       <p className="text-red-600 font-semibold">Out of Stock</p>
@@ -354,24 +332,14 @@ export default function ProductDetail({ productId }: { productId: string }) {
                       <Button
                         size="lg"
                         className="w-full bg-gray-900 hover:bg-gray-800 text-white py-6 text-lg font-medium tracking-wide"
-                        onClick={handleAddToCart}
+                        onClick={() => {
+                          const message = `Hi, I'm interested in ${product.name}. Can you provide more details?`;
+                          const whatsappUrl = `https://wa.me/9779769682175?text=${encodeURIComponent(message)}`;
+                          window.open(whatsappUrl, '_blank');
+                        }}
                         disabled={!isInStock}
                       >
-                        <ShoppingCart className="w-5 h-5 mr-2" />
-                        ADD TO CART
-                      </Button>
-                    </motion.div>
-
-                    <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
-                      <Button
-                        size="lg"
-                        variant="outline"
-                        className="w-full py-6 text-lg font-medium tracking-wide"
-                        asChild
-                      >
-                        <Link href="/booking">
-                          BOOK A CONSULTATION
-                        </Link>
+                        BOOK NOW
                       </Button>
                     </motion.div>
                   </div>
@@ -451,7 +419,7 @@ export default function ProductDetail({ productId }: { productId: string }) {
                         viewport={{ once: true }}
                         transition={{ delay: index * 0.1 }}
                       >
-                        <Link href={`/product/${relatedProduct.id}`}>
+                        <Link href={`/product/${relatedProduct.slug || relatedProduct.id}`}>
                           <motion.div
                             whileHover={{ y: -8 }}
                             transition={{ duration: 0.3 }}
@@ -459,11 +427,11 @@ export default function ProductDetail({ productId }: { productId: string }) {
                           >
                             <Card className="overflow-hidden hover:shadow-xl transition-all duration-500 border-0">
                               <div className="relative h-64 overflow-hidden bg-gray-100">
-                                {relatedProduct.imageUrl ? (
+                                {relatedProduct.colors && relatedProduct.colors.length > 0 && relatedProduct.colors[0].images?.[0] ? (
                                   <motion.img
                                     whileHover={{ scale: 1.1 }}
                                     transition={{ duration: 0.6 }}
-                                    src={relatedProduct.imageUrl}
+                                    src={relatedProduct.colors[0].images[0]}
                                     alt={relatedProduct.name}
                                     className="w-full h-full object-cover"
                                   />
@@ -498,6 +466,128 @@ export default function ProductDetail({ productId }: { productId: string }) {
                 </div>
               </AnimatedSection>
             )}
+
+            {/* Reviews Section */}
+            <AnimatedSection className="mt-24 pt-16 border-t border-gray-200">
+              <div className="mb-8">
+                <div className="flex items-center justify-between mb-4">
+                  <div>
+                    <h3 className="text-2xl font-semibold text-gray-900">Customer Reviews</h3>
+                    <p className="text-sm text-gray-500 mt-1">Reviews for: {product.name}</p>
+                  </div>
+                  <Button
+                    onClick={() => setShowReviewForm(!showReviewForm)}
+                    className="bg-[#2d4a3e] hover:bg-[#1e352b] text-white px-6 py-2 rounded-lg font-medium transition-all duration-300 shadow-md hover:shadow-lg"
+                  >
+                    {showReviewForm ? 'Cancel' : 'Write a Review'}
+                  </Button>
+                </div>
+
+                {showReviewForm && (
+                  <motion.div
+                    initial={{ opacity: 0, height: 0 }}
+                    animate={{ opacity: 1, height: 'auto' }}
+                    exit={{ opacity: 0, height: 0 }}
+                    className="bg-gray-50 p-6 rounded-lg mb-6"
+                  >
+                    <form onSubmit={handleReviewSubmit} className="space-y-4">
+                      <div className="grid grid-cols-2 gap-4">
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-1">Name</label>
+                          <input
+                            type="text"
+                            required
+                            value={reviewForm.name}
+                            onChange={(e) => setReviewForm({ ...reviewForm, name: e.target.value })}
+                            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-transparent placeholder:text-gray-400"
+                            placeholder="Your name"
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                          <input
+                            type="email"
+                            required
+                            value={reviewForm.email}
+                            onChange={(e) => setReviewForm({ ...reviewForm, email: e.target.value })}
+                            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-transparent placeholder:text-gray-400"
+                            placeholder="your@email.com"
+                          />
+                        </div>
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">Rating</label>
+                        <div className="flex items-center gap-2">
+                          {[1, 2, 3, 4, 5].map((star) => (
+                            <button
+                              key={star}
+                              type="button"
+                              onClick={() => setReviewForm({ ...reviewForm, rating: star })}
+                              className="focus:outline-none"
+                            >
+                              <Star
+                                className={`w-6 h-6 ${
+                                  star <= reviewForm.rating
+                                    ? 'fill-yellow-400 text-yellow-400'
+                                    : 'text-gray-300'
+                                }`}
+                              />
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">Review</label>
+                        <textarea
+                          required
+                          value={reviewForm.comment}
+                          onChange={(e) => setReviewForm({ ...reviewForm, comment: e.target.value })}
+                          rows={3}
+                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-transparent placeholder:text-gray-400 resize-none"
+                          placeholder="Share your experience with this product..."
+                        />
+                      </div>
+                      <Button 
+                        type="submit" 
+                        className="w-full bg-[#2d4a3e] hover:bg-[#1e352b] text-white py-3 rounded-lg font-medium transition-all duration-300 shadow-md hover:shadow-lg"
+                      >
+                        Submit Review
+                      </Button>
+                    </form>
+                  </motion.div>
+                )}
+
+                {reviews.length > 0 ? (
+                  <div className="space-y-4">
+                    {reviews.map((review: any) => (
+                      <div key={review.id} className="border-b border-gray-200 pb-4 last:border-0">
+                        <div className="flex items-center gap-2 mb-2">
+                          <div className="flex items-center gap-1">
+                            {[1, 2, 3, 4, 5].map((star) => (
+                              <Star
+                                key={star}
+                                className={`w-4 h-4 ${
+                                  star <= (review.rating / 10)
+                                    ? 'fill-yellow-400 text-yellow-400'
+                                    : 'text-gray-300'
+                                }`}
+                              />
+                            ))}
+                          </div>
+                          <span className="font-medium text-gray-900">{review.name}</span>
+                        </div>
+                        <p className="text-gray-600 text-sm">{review.comment}</p>
+                        <p className="text-xs text-gray-400 mt-1">
+                          {new Date(review.createdAt).toLocaleDateString()}
+                        </p>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <p className="text-gray-500 text-sm">No reviews yet. Be the first to review!</p>
+                )}
+              </div>
+            </AnimatedSection>
           </div>
         </section>
 

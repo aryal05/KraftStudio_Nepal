@@ -1,7 +1,12 @@
+"use client";
+
 import Link from "next/link";
 import { Mail, Phone, MapPin, MessageCircle } from "lucide-react";
+import { trpc } from "@/lib/trpc";
 
 export default function Footer() {
+  const { data: categories = [] } = trpc.categories.getAll.useQuery();
+
   return (
     <footer className="bg-gray-900 text-white mt-20">
       <div className="max-w-7xl mx-auto px-6 py-16">
@@ -32,31 +37,16 @@ export default function Footer() {
           <div>
             <h3 className="font-serif font-bold text-lg mb-4">Categories</h3>
             <ul className="space-y-2 text-sm">
-              <li>
-                <Link href="/furniture" className="text-gray-300 hover:text-white transition-colors">
-                  Furniture
-                </Link>
-              </li>
-              <li>
-                <Link href="/lighting" className="text-gray-300 hover:text-white transition-colors">
-                  Lighting
-                </Link>
-              </li>
-              <li>
-                <Link href="/decor" className="text-gray-300 hover:text-white transition-colors">
-                  Decor
-                </Link>
-              </li>
-              <li>
-                <Link href="/workspace" className="text-gray-300 hover:text-white transition-colors">
-                  Workspace
-                </Link>
-              </li>
-              <li>
-                <Link href="/booking" className="text-gray-300 hover:text-white transition-colors">
-                  Custom Orders
-                </Link>
-              </li>
+              {categories.map((category: any) => (
+                <li key={category.id}>
+                  <Link 
+                    href={`/category/${category.slug}`} 
+                    className="text-gray-300 hover:text-white transition-colors"
+                  >
+                    {category.name}
+                  </Link>
+                </li>
+              ))}
             </ul>
           </div>
 
@@ -77,11 +67,6 @@ export default function Footer() {
               <li>
                 <Link href="/blog" className="text-gray-300 hover:text-white transition-colors">
                   Blog & Inspiration
-                </Link>
-              </li>
-              <li>
-                <Link href="/booking" className="text-gray-300 hover:text-white transition-colors">
-                  Book Consultation
                 </Link>
               </li>
             </ul>
@@ -114,16 +99,16 @@ export default function Footer() {
               <li className="flex items-start gap-2">
                 <Mail className="w-4 h-4 mt-0.5 flex-shrink-0 text-gray-400" />
                 <a
-                  href="mailto:info@kraftstudio.com"
+                  href="mailto:kraftstudio.np@gmail.com"
                   className="text-gray-300 hover:text-white transition-colors"
                 >
-                  info@kraftstudio.com
+                  kraftstudio.np@gmail.com
                 </a>
               </li>
               <li className="flex items-start gap-2">
                 <MapPin className="w-4 h-4 mt-0.5 flex-shrink-0 text-gray-400" />
                 <span className="text-gray-300">
-                  Nepal
+                  Bhaktapur, Nepal
                 </span>
               </li>
             </ul>
@@ -137,7 +122,7 @@ export default function Footer() {
           </p>
           <div className="flex gap-6 mt-4 md:mt-0">
             <a 
-              href="https://www.facebook.com" 
+              href="https://www.facebook.com/profile.php?id=61582688310885" 
               target="_blank"
               rel="noopener noreferrer"
               className="text-gray-400 hover:text-white transition-colors text-sm"
@@ -145,7 +130,7 @@ export default function Footer() {
               Facebook
             </a>
             <a 
-              href="https://www.instagram.com" 
+              href="https://www.instagram.com/kraftstudio.np/" 
               target="_blank"
               rel="noopener noreferrer"
               className="text-gray-400 hover:text-white transition-colors text-sm"

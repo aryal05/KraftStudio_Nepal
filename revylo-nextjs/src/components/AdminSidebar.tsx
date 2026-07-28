@@ -2,56 +2,68 @@
 
 import { motion } from "framer-motion";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { 
-  LayoutDashboard, 
-  Package, 
-  ShoppingBag, 
-  Users, 
   MessageCircle, 
-  Calendar,
-  FileText, 
-  TrendingUp, 
-  Lightbulb,
-  Sofa,
-  Sparkles,
-  HelpCircle,
-  Settings,
   LogOut,
-  ChevronRight
+  ChevronRight,
+  Layers,
+  Star
 } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
+import { trpc } from "@/lib/trpc";
 
-const mainMenuItems = [
+// ========== HIDDEN MENU ITEMS (Commented out as per requirements) ==========
+// Uncomment these items to restore them in the sidebar
+// You'll also need to uncomment the imports below:
+// import { LayoutDashboard, Package, ShoppingBag, Users, Calendar, FileText, TrendingUp, Lightbulb, Sofa, Sparkles, HelpCircle, Settings } from "lucide-react";
+/*
+const hiddenMainMenuItems = [
   { icon: LayoutDashboard, label: "Dashboard", href: "/admin/dashboard" },
   { icon: Package, label: "Products", href: "/admin/products" },
   { icon: ShoppingBag, label: "Orders", href: "/admin/orders" },
   { icon: Calendar, label: "Bookings", href: "/admin/bookings" },
   { icon: Users, label: "Customers", href: "/admin/customers" },
-  { icon: MessageCircle, label: "Messages", href: "/admin/messages", badge: 2 },
 ];
 
-const contentMenuItems = [
+const hiddenContentMenuItems = [
   { icon: FileText, label: "Blog Posts", href: "/admin/blog" },
   { icon: Sofa, label: "Furniture Catalog", href: "/admin/furniture" },
   { icon: Lightbulb, label: "Lighting Catalog", href: "/admin/lighting" },
   { icon: Sparkles, label: "Decor Items", href: "/admin/decor" },
 ];
 
-const analyticsMenuItems = [
+const hiddenAnalyticsMenuItems = [
   { icon: TrendingUp, label: "Analytics", href: "/admin/analytics" },
 ];
 
-const accountItems = [
+const hiddenAccountItems = [
   { icon: HelpCircle, label: "Help & Support", href: "/admin/help" },
   { icon: Settings, label: "Settings", href: "/admin/settings" },
+];
+*/
+// ========== END HIDDEN MENU ITEMS ==========
+
+// Active menu items (currently visible)
+const menuItems = [
+  { icon: Layers, label: "Category Management", href: "/admin/categories" },
+  { icon: Star, label: "Reviews", href: "/admin/reviews" },
+  { icon: MessageCircle, label: "Messages", href: "/admin/messages", badge: true },
 ];
 
 export default function AdminSidebar() {
   const pathname = usePathname();
+  const router = useRouter();
+  const { data: unreadCount = 0 } = trpc.messages.getUnreadCount.useQuery();
 
   const isActive = (href: string) => pathname === href;
+
+  const handleLogout = () => {
+    // Clear session and redirect to login
+    document.cookie = "admin-session=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+    router.push("/admin/login");
+  };
 
   return (
     <motion.div
@@ -83,39 +95,17 @@ export default function AdminSidebar() {
         </button>
       </div>
 
-      {/* Search */}
-      <div className="px-4 py-4">
-        <div className="relative">
-          <input
-            type="text"
-            placeholder="Search..."
-            className="w-full bg-[#234136] text-white placeholder-white/40 rounded-lg px-4 py-2 pl-10 text-sm focus:outline-none focus:ring-2 focus:ring-white/20 transition-all"
-            style={{ fontFamily: "'Inter', sans-serif" }}
-          />
-          <svg
-            className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white/40"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-          >
-            <circle cx="11" cy="11" r="8" />
-            <path d="m21 21-4.35-4.35" />
-          </svg>
-          <kbd className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-white/40" style={{ fontFamily: "'JetBrains Mono', monospace" }}>
-            ⌘K
-          </kbd>
-        </div>
-      </div>
-
       {/* Main Menu */}
-      <div className="px-4 py-2">
+      <div className="px-4 py-6 flex-1">
         <h3 className="text-xs font-semibold text-white/60 uppercase tracking-wider mb-3 px-3" style={{ fontFamily: "'Inter', sans-serif" }}>
           Main Menu
         </h3>
         <nav className="space-y-1">
-          {mainMenuItems.map((item) => {
+          {menuItems.map((item) => {
             const Icon = item.icon;
             const active = isActive(item.href);
+            const badgeCount = item.badge ? unreadCount : 0;
+            
             return (
               <Link key={item.href} href={item.href}>
                 <motion.div
@@ -132,9 +122,9 @@ export default function AdminSidebar() {
                 >
                   <Icon className="w-5 h-5 flex-shrink-0" />
                   <span className="flex-1">{item.label}</span>
-                  {item.badge && (
+                  {item.badge && badgeCount > 0 && (
                     <Badge className="bg-red-500 text-white border-0 h-5 min-w-5 flex items-center justify-center text-xs font-semibold">
-                      {item.badge}
+                      {badgeCount}
                     </Badge>
                   )}
                   {active && (
@@ -150,110 +140,28 @@ export default function AdminSidebar() {
         </nav>
       </div>
 
-      {/* Content Management */}
-      <div className="px-4 py-2 mt-4">
-        <h3 className="text-xs font-semibold text-white/60 uppercase tracking-wider mb-3 px-3" style={{ fontFamily: "'Inter', sans-serif" }}>
-          Content
-        </h3>
-        <nav className="space-y-1">
-          {contentMenuItems.map((item) => {
-            const Icon = item.icon;
-            const active = isActive(item.href);
-            return (
-              <Link key={item.href} href={item.href}>
-                <motion.div
-                  whileHover={{ x: 4 }}
-                  whileTap={{ scale: 0.98 }}
-                  className={`
-                    flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all cursor-pointer
-                    ${active 
-                      ? 'bg-white/10 text-white shadow-sm' 
-                      : 'text-white/70 hover:bg-white/5 hover:text-white'
-                    }
-                  `}
-                  style={{ fontFamily: "'Inter', sans-serif" }}
-                >
-                  <Icon className="w-5 h-5 flex-shrink-0" />
-                  <span className="flex-1">{item.label}</span>
-                </motion.div>
-              </Link>
-            );
-          })}
-        </nav>
-      </div>
-
-      {/* Analytics */}
-      <div className="px-4 py-2 mt-4">
-        <h3 className="text-xs font-semibold text-white/60 uppercase tracking-wider mb-3 px-3" style={{ fontFamily: "'Inter', sans-serif" }}>
-          Analytics
-        </h3>
-        <nav className="space-y-1">
-          {analyticsMenuItems.map((item) => {
-            const Icon = item.icon;
-            const active = isActive(item.href);
-            return (
-              <Link key={item.href} href={item.href}>
-                <motion.div
-                  whileHover={{ x: 4 }}
-                  whileTap={{ scale: 0.98 }}
-                  className={`
-                    flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all cursor-pointer
-                    ${active 
-                      ? 'bg-white/10 text-white shadow-sm' 
-                      : 'text-white/70 hover:bg-white/5 hover:text-white'
-                    }
-                  `}
-                  style={{ fontFamily: "'Inter', sans-serif" }}
-                >
-                  <Icon className="w-5 h-5 flex-shrink-0" />
-                  <span className="flex-1">{item.label}</span>
-                </motion.div>
-              </Link>
-            );
-          })}
-        </nav>
-      </div>
-
-      {/* Account */}
-      <div className="px-4 py-2 mt-auto">
-        <h3 className="text-xs font-semibold text-white/60 uppercase tracking-wider mb-3 px-3" style={{ fontFamily: "'Inter', sans-serif" }}>
-          Account
-        </h3>
-        <nav className="space-y-1">
-          {accountItems.map((item) => {
-            const Icon = item.icon;
-            const active = isActive(item.href);
-            return (
-              <Link key={item.href} href={item.href}>
-                <motion.div
-                  whileHover={{ x: 4 }}
-                  whileTap={{ scale: 0.98 }}
-                  className={`
-                    flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all cursor-pointer
-                    ${active 
-                      ? 'bg-white/10 text-white shadow-sm' 
-                      : 'text-white/70 hover:bg-white/5 hover:text-white'
-                    }
-                  `}
-                  style={{ fontFamily: "'Inter', sans-serif" }}
-                >
-                  <Icon className="w-5 h-5 flex-shrink-0" />
-                  <span className="flex-1">{item.label}</span>
-                </motion.div>
-              </Link>
-            );
-          })}
-        </nav>
+      {/* Logout Button */}
+      <div className="px-4 py-4 border-t border-white/10">
+        <motion.button
+          onClick={handleLogout}
+          whileHover={{ x: 4 }}
+          whileTap={{ scale: 0.98 }}
+          className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-white/70 hover:bg-white/5 hover:text-white transition-all w-full cursor-pointer"
+          style={{ fontFamily: "'Inter', sans-serif" }}
+        >
+          <LogOut className="w-5 h-5 flex-shrink-0" />
+          <span className="flex-1 text-left">Logout</span>
+        </motion.button>
       </div>
 
       {/* User Profile */}
-      <div className="p-4 mt-4 border-t border-white/10">
+      <div className="p-4 border-t border-white/10">
         <motion.div
           whileHover={{ backgroundColor: 'rgba(255, 255, 255, 0.05)' }}
           className="flex items-center gap-3 p-2 rounded-lg cursor-pointer transition-colors"
         >
           <Avatar className="w-10 h-10 border-2 border-white/20">
-            <AvatarImage src="/api/placeholder/40/40" />
+            <AvatarImage src="" />
             <AvatarFallback className="bg-[#234136] text-white" style={{ fontFamily: "'Poppins', sans-serif" }}>
               AD
             </AvatarFallback>
@@ -266,13 +174,6 @@ export default function AdminSidebar() {
               admin@kraftstudio.com
             </p>
           </div>
-          <motion.button
-            whileHover={{ scale: 1.1 }}
-            whileTap={{ scale: 0.9 }}
-            className="text-white/60 hover:text-white transition-colors"
-          >
-            <LogOut className="w-4 h-4" />
-          </motion.button>
         </motion.div>
       </div>
     </motion.div>

@@ -1,6 +1,7 @@
 "use client";
 
-import { ReactNode } from "react";
+import { ReactNode, useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import AdminSidebar from "./AdminSidebar";
 import { motion } from "framer-motion";
 
@@ -9,6 +10,32 @@ interface AdminLayoutProps {
 }
 
 export default function AdminLayout({ children }: AdminLayoutProps) {
+  const router = useRouter();
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isMounted, setIsMounted] = useState(false);
+
+  useEffect(() => {
+    setIsMounted(true);
+    
+    // Check for admin session cookie
+    const hasSession = document.cookie.includes('admin-session=');
+    if (!hasSession) {
+      router.push('/admin/login');
+    } else {
+      setIsAuthenticated(true);
+    }
+  }, [router]);
+
+  // Don't render anything until mounted (prevents hydration mismatch)
+  if (!isMounted) {
+    return null;
+  }
+
+  // Don't render children if not authenticated
+  if (!isAuthenticated) {
+    return null;
+  }
+
   return (
     <div className="flex min-h-screen bg-[#f5f5f5]">
       <AdminSidebar />

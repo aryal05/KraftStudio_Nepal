@@ -37,10 +37,10 @@ const conversionData = [
 ];
 
 const productList = [
-  { id: 1, name: "Cooper, Kristin", image: "/api/placeholder/40/40", price: 11992, stock: 34, sold: 340, active: true },
-  { id: 2, name: "Mid-Century Lounge Chair", image: "/api/placeholder/40/40", price: 29900, stock: 12, sold: 156, active: true },
-  { id: 3, name: "Minimalist Desk Lamp", image: "/api/placeholder/40/40", price: 8950, stock: 45, sold: 203, active: false },
-  { id: 4, name: "Scandinavian Coffee Table", image: "/api/placeholder/40/40", price: 44999, stock: 8, sold: 87, active: true },
+  { id: 1, name: "Cooper, Kristin", image: "", price: 11992, stock: 34, sold: 340, active: true },
+  { id: 2, name: "Mid-Century Lounge Chair", image: "", price: 29900, stock: 12, sold: 156, active: true },
+  { id: 3, name: "Minimalist Desk Lamp", image: "", price: 8950, stock: 45, sold: 203, active: false },
+  { id: 4, name: "Scandinavian Coffee Table", image: "", price: 44999, stock: 8, sold: 87, active: true },
 ];
 
 export default function AdminDashboard() {
@@ -66,15 +66,15 @@ export default function AdminDashboard() {
             {/* Team avatars */}
             <div className="flex -space-x-2">
               <Avatar className="w-8 h-8 border-2 border-white">
-                <AvatarImage src="/api/placeholder/32/32" />
+                <AvatarImage src="" />
                 <AvatarFallback>T</AvatarFallback>
               </Avatar>
               <Avatar className="w-8 h-8 border-2 border-white">
-                <AvatarImage src="/api/placeholder/32/32" />
+                <AvatarImage src="" />
                 <AvatarFallback>A</AvatarFallback>
               </Avatar>
               <Avatar className="w-8 h-8 border-2 border-white">
-                <AvatarImage src="/api/placeholder/32/32" />
+                <AvatarImage src="" />
                 <AvatarFallback>S</AvatarFallback>
               </Avatar>
               <button className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center text-gray-600 hover:bg-gray-200 transition-colors">

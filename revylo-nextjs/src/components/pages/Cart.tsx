@@ -242,7 +242,7 @@ export default function Cart() {
                     <div className="space-y-4 mb-8">
                       <div className="flex justify-between text-gray-900 font-['Space_Grotesk']">
                         <span>Subtotal</span>
-                        <span>${subtotal.toFixed(2)}</span>
+                        <span>NPR {subtotal.toFixed(2)}</span>
                       </div>
                       <div className="flex justify-between text-gray-900 font-['Space_Grotesk']">
                         <span>Shipping</span>
@@ -250,11 +250,11 @@ export default function Cart() {
                       </div>
                       <div className="flex justify-between text-gray-900 font-['Space_Grotesk']">
                         <span>Tax (10%)</span>
-                        <span>${tax.toFixed(2)}</span>
+                        <span>NPR {tax.toFixed(2)}</span>
                       </div>
                       <div className="border-t border-gray-200 pt-4 flex justify-between font-serif text-xl font-bold text-gray-900 font-['Cormorant_Garamond']">
                         <span>Total</span>
-                        <span>${total.toFixed(2)}</span>
+                        <span>NPR {total.toFixed(2)}</span>
                       </div>
                     </div>
 
@@ -281,7 +281,7 @@ export default function Cart() {
                     <div className="mt-8 pt-8 border-t border-gray-200 space-y-4 text-sm text-gray-600 font-['Space_Grotesk']">
                       <div className="flex items-start gap-3">
                         <span className="text-lg">✓</span>
-                        <span>Free shipping on orders over $100</span>
+                        <span>Free shipping on orders over NPR 50,000</span>
                       </div>
                       <div className="flex items-start gap-3">
                         <span className="text-lg">✓</span>

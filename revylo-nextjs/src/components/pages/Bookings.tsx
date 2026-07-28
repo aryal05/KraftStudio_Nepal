@@ -27,7 +27,7 @@ const bookings = [
     status: "confirmed",
     type: "Design Consultation",
     message: "Looking for furniture for new apartment",
-    avatar: "/api/placeholder/40/40",
+    avatar: "",
   },
   {
     id: "#BK-2024-002",
@@ -39,7 +39,7 @@ const bookings = [
     status: "pending",
     type: "Virtual Consultation",
     message: "Office workspace design",
-    avatar: "/api/placeholder/40/40",
+    avatar: "",
   },
   {
     id: "#BK-2024-003",
@@ -51,7 +51,7 @@ const bookings = [
     status: "confirmed",
     type: "In-Store Visit",
     message: "Living room furniture shopping",
-    avatar: "/api/placeholder/40/40",
+    avatar: "",
   },
   {
     id: "#BK-2024-004",
@@ -63,7 +63,7 @@ const bookings = [
     status: "completed",
     type: "Design Consultation",
     message: "Full home interior design",
-    avatar: "/api/placeholder/40/40",
+    avatar: "",
   },
   {
     id: "#BK-2024-005",
@@ -75,7 +75,7 @@ const bookings = [
     status: "cancelled",
     type: "Virtual Consultation",
     message: "Bedroom makeover ideas",
-    avatar: "/api/placeholder/40/40",
+    avatar: "",
   },
 ];
 

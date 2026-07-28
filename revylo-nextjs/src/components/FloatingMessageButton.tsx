@@ -119,7 +119,7 @@ export default function FloatingMessageButton() {
                 {/* Email */}
                 <motion.a
                   whileHover={{ scale: 1.02, x: 5 }}
-                  href="mailto:info@kraftstudio.com?subject=Inquiry about Furniture"
+                  href="mailto:kraftstudio.np@gmail.com?subject=Inquiry about Furniture"
                   className="flex items-center gap-3 p-3 bg-gray-50 hover:bg-gray-100 rounded-lg transition-colors group"
                 >
                   <div className="w-10 h-10 bg-gray-900 text-white rounded-full flex items-center justify-center flex-shrink-0">
@@ -128,7 +128,7 @@ export default function FloatingMessageButton() {
                   <div className="flex-1 min-w-0">
                     <p className="text-xs text-gray-600 mb-0.5">Email</p>
                     <p className="font-semibold text-gray-900 group-hover:text-gray-700 truncate">
-                      info@kraftstudio.com
+                      kraftstudio.np@gmail.com
                     </p>
                   </div>
                 </motion.a>

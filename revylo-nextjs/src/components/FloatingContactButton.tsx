@@ -11,19 +11,19 @@ export default function FloatingContactButton() {
     {
       name: "Email",
       icon: Mail,
-      href: "mailto:info@kraftstudio.com",
+      href: "mailto:kraftstudio.np@gmail.com",
       color: "bg-blue-500 hover:bg-blue-600",
     },
     {
       name: "WhatsApp",
       icon: MessageCircle,
-      href: "https://wa.me/9779800000000",
+      href: "https://wa.me/9779769682175",
       color: "bg-green-500 hover:bg-green-600",
     },
     {
       name: "Call",
       icon: Phone,
-      href: "tel:+9779800000000",
+      href: "tel:+9779769682175",
       color: "bg-purple-500 hover:bg-purple-600",
     },
   ];

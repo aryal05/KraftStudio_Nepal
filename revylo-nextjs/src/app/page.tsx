@@ -11,6 +11,7 @@ import AnimatedSection from "@/components/AnimatedSection";
 import PageTransition from "@/components/PageTransition";
 import { DroppingLetters, WalkingText, FloatingText } from "@/lib/animations";
 import { useState, useEffect } from "react";
+import { trpc } from "@/lib/trpc";
 
 const fadeInUp = {
   initial: { opacity: 0, y: 40 },
@@ -82,73 +83,21 @@ const FadeLoopText = ({
   );
 };
 
-const categories = [
-  {
-    title: "Living Room",
-    description: "Premium furniture for your living spaces",
-    image: "https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=800&h=600&fit=crop&q=80",
-    href: "/furniture",
-  },
-  {
-    title: "Lighting",
-    description: "Illuminate your home with style",
-    image: "https://images.unsplash.com/photo-1513506003901-1e6a229e2d15?w=800&h=600&fit=crop&q=80",
-    href: "/lighting",
-  },
-  {
-    title: "Workspace",
-    description: "Design your perfect work environment",
-    image: "https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?w=800&h=600&fit=crop&q=80",
-    href: "/workspace",
-  },
-];
-
-const colorSwatches = [
-  {
-    name: "Charcoal Gray",
-    color: "#4a4a4a",
-    rating: 4.5,
-    reviews: 24,
-  },
-  {
-    name: "Wheat",
-    color: "#d4a574",
-    rating: 4.7,
-    reviews: 18,
-  },
-  {
-    name: "Misty Blue",
-    color: "#8b9db0",
-    rating: 4.6,
-    reviews: 32,
-  },
-];
-
-const testimonials = [
-  {
-    name: "Sarah Johnson",
-    role: "Interior Designer",
-    content: "REVYLO has transformed how I source furniture for my clients. The quality and design are unmatched.",
-    image: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&h=100&fit=crop",
-  },
-  {
-    name: "Michael Chen",
-    role: "Homeowner",
-    content: "The consultation service was incredibly helpful. They understood my vision perfectly.",
-    image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop",
-  },
-  {
-    name: "Emma Wilson",
-    role: "Architect",
-    content: "Outstanding collection and exceptional customer service. Highly recommended!",
-    image: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=100&h=100&fit=crop",
-  },
-];
-
 export default function Home() {
   const { scrollY } = useScroll();
   const heroY = useTransform(scrollY, [0, 500], [0, 150]);
   const heroOpacity = useTransform(scrollY, [0, 300], [1, 0]);
+
+  // Fetch featured categories from database
+  const { data: featuredCategories = [] } = trpc.categories.getFeatured.useQuery({ limit: 3 });
+
+  // Fetch color swatches and reviews from database
+  const { data: colorSwatches = [] } = trpc.colorSwatches.getAll.useQuery();
+  const { data: reviews = [] } = trpc.reviews.getAll.useQuery();
+
+  // Debug logging
+  console.log("Featured categories on frontend:", featuredCategories);
+  console.log("Featured categories count:", featuredCategories.length);
 
   return (
     <PageTransition>
@@ -293,55 +242,63 @@ export default function Home() {
             </motion.div>
           </AnimatedSection>
 
-          <motion.div
-            variants={staggerContainer}
-            initial="initial"
-            whileInView="animate"
-            viewport={{ once: true, margin: "-100px" }}
-            className="grid grid-cols-1 md:grid-cols-3 gap-8"
-          >
-            {categories.map((cat, index) => (
-              <motion.div key={cat.title} variants={fadeInUp}>
-                <Link href={cat.href}>
-                  <motion.div
-                    whileHover={{ y: -8 }}
-                    transition={{ duration: 0.3 }}
-                    className="group block"
-                  >
-                    <Card className="overflow-hidden border-0 shadow-md hover:shadow-2xl transition-all duration-500 bg-white">
-                      <div className="relative h-72 overflow-hidden">
-                        <motion.img
-                          whileHover={{ scale: 1.1 }}
-                          transition={{ duration: 0.6 }}
-                          src={cat.image}
-                          alt={cat.title}
-                          className="w-full h-full object-cover"
-                        />
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-                      </div>
-                      <div className="p-8 bg-white">
-                        <h3 className="text-2xl font-normal text-gray-900 mb-3 font-['Cormorant_Garamond']">
-                          {cat.title}
-                        </h3>
-                        <p className="text-gray-600 text-sm mb-5 leading-relaxed font-['Space_Grotesk']">
-                          {cat.description}
-                        </p>
-                        <div className="flex items-center text-gray-900 font-medium text-sm group-hover:gap-3 gap-2 transition-all font-['Syne']">
-                          Explore Collection
-                          <motion.div
-                            animate={{ x: [0, 5, 0] }}
-                            transition={{ duration: 1.5, repeat: Infinity }}
-                          >
-                            <ArrowRight className="w-4 h-4" />
-                          </motion.div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {featuredCategories.length > 0 ? (
+              featuredCategories.map((cat: any, index: number) => (
+                <motion.div
+                  key={cat.id}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: index * 0.1 }}
+                >
+                  <Link href={`/category/${cat.slug}`}>
+                    <motion.div
+                      whileHover={{ y: -8 }}
+                      transition={{ duration: 0.3 }}
+                      className="group block"
+                    >
+                      <Card className="overflow-hidden border-0 shadow-md hover:shadow-2xl transition-all duration-500 bg-white">
+                        <div className="relative h-72 overflow-hidden">
+                          <motion.img
+                            whileHover={{ scale: 1.1 }}
+                            transition={{ duration: 0.6 }}
+                            src={cat.imageUrl || "https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?w=800&h=600&fit=crop&q=80"}
+                            alt={cat.name}
+                            className="w-full h-full object-cover"
+                            onError={(e) => {
+                              e.currentTarget.src = "https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?w=800&h=600&fit=crop&q=80";
+                            }}
+                          />
+                          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                         </div>
-                      </div>
-                    </Card>
-                  </motion.div>
-                </Link>
-              </motion.div>
-            ))}
-          </motion.div>
+                        <div className="p-8 bg-white">
+                          <h3 className="text-2xl font-normal text-gray-900 mb-3 font-['Cormorant_Garamond']">
+                            {cat.name}
+                          </h3>
+                          <p className="text-gray-600 text-sm mb-5 leading-relaxed font-['Space_Grotesk']">
+                            {cat.description || "Explore our collection"}
+                          </p>
+                          <div className="flex items-center text-gray-900 font-medium text-sm group-hover:gap-3 gap-2 transition-all font-['Syne']">
+                            Explore Collection
+                            <motion.div
+                              animate={{ x: [0, 5, 0] }}
+                              transition={{ duration: 1.5, repeat: Infinity }}
+                            >
+                              <ArrowRight className="w-4 h-4" />
+                            </motion.div>
+                          </div>
+                        </div>
+                      </Card>
+                    </motion.div>
+                  </Link>
+                </motion.div>
+              ))
+            ) : (
+              <div className="col-span-full text-center py-12">
+                <p className="text-gray-500">No featured categories available</p>
+              </div>
+            )}
+          </div>
         </div>
       </section>
 
@@ -469,52 +426,58 @@ export default function Home() {
             </AnimatedSection>
 
             <AnimatedSection direction="right" className="grid grid-cols-3 gap-6">
-              {colorSwatches.map((swatch, index) => (
-                <motion.div
-                  key={swatch.name}
-                  initial={{ opacity: 0, y: 50, rotate: -10 }}
-                  whileInView={{ opacity: 1, y: 0, rotate: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ 
-                    delay: index * 0.2,
-                    type: "spring",
-                    stiffness: 100,
-                    damping: 10
-                  }}
-                  whileHover={{ y: -10, scale: 1.05 }}
-                  className="text-center"
-                >
-                  <div
-                    className="w-full h-48 rounded-xl mb-4 shadow-2xl cursor-pointer"
-                    style={{ backgroundColor: swatch.color }}
-                  />
-                  <h3 className="text-sm font-normal text-white mb-2 font-['Cormorant_Garamond']">
-                    {swatch.name}
-                  </h3>
-                  <div className="flex items-center justify-center gap-1">
-                    {[...Array(5)].map((_, i) => (
-                      <Star
-                        key={i}
-                        className={`w-3 h-3 ${
-                          i < Math.floor(swatch.rating)
-                            ? "fill-white text-white"
-                            : "text-gray-600"
-                        }`}
-                      />
-                    ))}
-                  </div>
-                  <p className="text-xs text-gray-400 mt-1 font-['Space_Grotesk']">
-                    {swatch.reviews} reviews
-                  </p>
-                </motion.div>
-              ))}
+              {colorSwatches.length > 0 ? (
+                colorSwatches.map((swatch: any, index: number) => (
+                  <motion.div
+                    key={swatch.id}
+                    initial={{ opacity: 0, y: 50, rotate: -10 }}
+                    whileInView={{ opacity: 1, y: 0, rotate: 0 }}
+                    viewport={{ once: true }}
+                    transition={{
+                      delay: index * 0.2,
+                      type: "spring",
+                      stiffness: 100,
+                      damping: 10
+                    }}
+                    whileHover={{ y: -10, scale: 1.05 }}
+                    className="text-center"
+                  >
+                    <div
+                      className="w-full h-48 rounded-xl mb-4 shadow-2xl cursor-pointer"
+                      style={{ backgroundColor: swatch.color }}
+                    />
+                    <h3 className="text-sm font-normal text-white mb-2 font-['Cormorant_Garamond']">
+                      {swatch.name}
+                    </h3>
+                    <div className="flex items-center justify-center gap-1">
+                      {[...Array(5)].map((_, i) => (
+                        <Star
+                          key={i}
+                          className={`w-3 h-3 ${
+                            i < Math.floor(swatch.rating / 10)
+                              ? "fill-white text-white"
+                              : "text-gray-600"
+                          }`}
+                        />
+                      ))}
+                    </div>
+                    <p className="text-xs text-gray-400 mt-1 font-['Space_Grotesk']">
+                      {swatch.reviews} reviews
+                    </p>
+                  </motion.div>
+                ))
+              ) : (
+                <div className="col-span-full text-center py-12">
+                  <p className="text-gray-400">No color swatches available</p>
+                </div>
+              )}
             </AnimatedSection>
           </div>
         </div>
       </section>
 
       {/* Testimonials Section */}
-      <section className="py-24 bg-gray-50">
+      <section className="py-24 bg-gray-50 overflow-hidden">
         <div className="max-w-7xl mx-auto px-6">
           <AnimatedSection className="text-center mb-16">
             <h2 className="text-4xl md:text-5xl font-light text-gray-900 mb-4 font-['Cormorant_Garamond']">
@@ -531,52 +494,74 @@ export default function Home() {
             </motion.p>
           </AnimatedSection>
 
-          <motion.div
-            variants={staggerContainer}
-            initial="initial"
-            whileInView="animate"
-            viewport={{ once: true, margin: "-100px" }}
-            className="grid grid-cols-1 md:grid-cols-3 gap-8"
-          >
-            {testimonials.map((testimonial, index) => (
-              <motion.div key={testimonial.name} variants={fadeInUp}>
-                <motion.div
-                  whileHover={{ y: -8 }}
-                  transition={{ duration: 0.3 }}
-                >
-                  <Card className="p-8 border-0 shadow-md hover:shadow-xl transition-all duration-500 h-full bg-white">
-                    <div className="flex gap-1 mb-6">
-                      {[...Array(5)].map((_, i) => (
-                        <Star key={i} className="w-4 h-4 fill-gray-900 text-gray-900" />
-                      ))}
-                    </div>
-                    <p className="text-gray-700 mb-8 leading-relaxed text-base italic font-['Space_Grotesk']">
-                      "{testimonial.content}"
-                    </p>
-                    <div className="flex items-center gap-4 pt-6 border-t border-gray-200">
-                      <img
-                        src={testimonial.image}
-                        alt={testimonial.name}
-                        className="w-14 h-14 rounded-full object-cover ring-2 ring-gray-200"
-                      />
-                      <div>
-                        <p className="font-semibold text-gray-900 font-['Syne']">
-                          {testimonial.name}
-                        </p>
-                        <p className="text-sm text-gray-600 font-['Space_Grotesk']">{testimonial.role}</p>
+          {/* Marquee Container - Infinite Scroll */}
+          <div className="relative overflow-hidden">
+            <motion.div
+              className="flex gap-8"
+              animate={{
+                x: [0, -50 * reviews.length * 6]
+              }}
+              transition={{
+                x: {
+                  repeat: Infinity,
+                  repeatType: "loop",
+                  duration: 40,
+                  ease: "linear",
+                },
+              }}
+              whileHover={{ animationPlayState: "paused" }}
+            >
+              {/* Show unique reviews only */}
+              {reviews.length > 0 ? (
+                reviews.map((review: any) => (
+                  <motion.div
+                    key={review.id}
+                    whileHover={{ scale: 1.05 }}
+                    transition={{ duration: 0.3 }}
+                    className="flex-shrink-0 w-[400px]"
+                  >
+                    <Card className="p-8 border-0 shadow-md hover:shadow-xl transition-all duration-500 h-full bg-white">
+                      <div className="flex gap-1 mb-6">
+                        {[1, 2, 3, 4, 5].map((star) => (
+                          <Star
+                            key={star}
+                            className={`w-4 h-4 ${
+                              star <= (review.rating / 10)
+                                ? 'fill-yellow-400 text-yellow-400'
+                                : 'text-gray-300'
+                            }`}
+                          />
+                        ))}
                       </div>
-                    </div>
-                  </Card>
-                </motion.div>
-              </motion.div>
-            ))}
-          </motion.div>
+                      <p className="text-gray-700 mb-8 leading-relaxed text-base italic font-['Space_Grotesk']">
+                        "{review.comment}"
+                      </p>
+                      <div className="flex items-center gap-4 pt-6 border-t border-gray-200">
+                        <div className="w-14 h-14 rounded-full bg-[#2d4a3e] flex items-center justify-center text-white font-semibold text-lg">
+                          {review.name.charAt(0).toUpperCase()}
+                        </div>
+                        <div>
+                          <p className="font-semibold text-gray-900 font-['Syne']">
+                            {review.name}
+                          </p>
+                        </div>
+                      </div>
+                    </Card>
+                  </motion.div>
+                ))
+              ) : (
+                <div className="w-full text-center py-12">
+                  <p className="text-gray-500">No reviews yet</p>
+                </div>
+              )}
+            </motion.div>
+          </div>
         </div>
       </section>
 
-      {/* Newsletter Section */}
+      {/* Newsletter Section - Commented Out */}
+      {/*
       <section className="py-24 bg-gray-900 text-white relative overflow-hidden">
-        {/* Background decoration */}
         <div className="absolute inset-0 opacity-5">
           <img 
             src="https://images.unsplash.com/photo-1615876234886-fd9a39fda97f?w=1920&h=800&fit=crop&q=80"
@@ -631,6 +616,7 @@ export default function Home() {
           </AnimatedSection>
         </div>
       </section>
+      */}
 
         <Footer />
       </div>

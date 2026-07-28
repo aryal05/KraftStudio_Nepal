@@ -34,7 +34,7 @@ const customers = [
     totalSpent: 459000, // NPR
     lastOrder: "2024-02-15",
     status: "vip",
-    avatar: "/api/placeholder/40/40",
+    avatar: "",
     joinDate: "2023-06-15",
   },
   {
@@ -47,7 +47,7 @@ const customers = [
     totalSpent: 289000,
     lastOrder: "2024-02-12",
     status: "regular",
-    avatar: "/api/placeholder/40/40",
+    avatar: "",
     joinDate: "2023-08-20",
   },
   {
@@ -60,7 +60,7 @@ const customers = [
     totalSpent: 678000,
     lastOrder: "2024-02-18",
     status: "vip",
-    avatar: "/api/placeholder/40/40",
+    avatar: "",
     joinDate: "2023-03-10",
   },
   {
@@ -73,7 +73,7 @@ const customers = [
     totalSpent: 125000,
     lastOrder: "2024-01-28",
     status: "new",
-    avatar: "/api/placeholder/40/40",
+    avatar: "",
     joinDate: "2024-01-05",
   },
   {
@@ -86,7 +86,7 @@ const customers = [
     totalSpent: 234000,
     lastOrder: "2024-02-10",
     status: "regular",
-    avatar: "/api/placeholder/40/40",
+    avatar: "",
     joinDate: "2023-09-18",
   },
 ];
