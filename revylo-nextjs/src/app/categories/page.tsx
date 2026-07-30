@@ -121,22 +121,22 @@ export default function CategoriesPage() {
       </section>
 
       {/* Category Filter Pills */}
-      <section className="py-8 bg-white border-b border-gray-200 shadow-sm">
-        <div className="max-w-7xl mx-auto px-6">
-          <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-hide">
+      <section className="py-6 bg-white border-b border-gray-200 shadow-sm">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6">
+          <div className="flex gap-2 sm:gap-3 overflow-x-auto pb-2 -mx-4 px-4 sm:mx-0 sm:px-0">
             {categoryFilters.map((filter) => (
               <button
                 key={filter.name}
                 onClick={() => setSelectedFilter(filter.name)}
-                className={`flex items-center gap-2 px-6 py-3 rounded-full font-medium whitespace-nowrap font-['Syne'] ${
+                className={`flex items-center gap-2 px-4 sm:px-6 py-2 sm:py-3 rounded-full font-medium whitespace-nowrap font-['Syne'] flex-shrink-0 ${
                   selectedFilter === filter.name
                     ? "bg-gray-900 text-white shadow-lg"
                     : "bg-gray-100 text-gray-700"
                 }`}
               >
                 <Grid3x3 className="w-4 h-4" />
-                <span>{filter.name}</span>
-                <Badge variant="secondary" className="ml-1">
+                <span className="text-sm sm:text-base">{filter.name}</span>
+                <Badge variant="secondary" className="ml-1 text-xs">
                   {filter.count}
                 </Badge>
               </button>
