@@ -72,7 +72,7 @@ export default function CategoriesPage() {
       <Navigation />
 
         {/* Hero Section */}
-        <section className="relative h-[70vh] min-h-[500px] flex items-center justify-center overflow-hidden bg-gray-900 pt-20">
+        <section className="relative h-[20vh] sm:h-[30vh] md:h-[55vh] lg:h-[70vh] min-h-[150px] sm:min-h-[220px] md:min-h-[450px] flex flex-col justify-start overflow-hidden bg-gray-900 pt-4 sm:pt-6 md:pt-20">
           {/* Background Image */}
           <div className="absolute inset-0 bg-gray-900">
             <img
@@ -88,40 +88,36 @@ export default function CategoriesPage() {
         <div className="absolute inset-0 bg-gradient-to-r from-gray-900/70 via-transparent to-gray-900/70" />
 
         {/* Content */}
-        <div className="relative z-10 max-w-6xl mx-auto px-4 sm:px-6 text-center py-12">
-          <div className="inline-flex items-center gap-2 px-4 py-2 bg-white/10 rounded-full text-white text-sm mb-8">
-            <Sparkles className="w-4 h-4" />
+        <div className="relative z-10 max-w-6xl mx-auto px-3 sm:px-4 md:px-6 text-center py-0.5 sm:py-1 md:py-12">
+          <div className="inline-flex items-center gap-1.5 px-1.5 py-0.5 sm:px-2 sm:py-1 md:px-4 md:py-2 bg-white/10 rounded-full text-white text-[10px] sm:text-xs md:text-sm mb-0.5 sm:mb-1 md:mb-8">
+            <Sparkles className="w-2.5 h-2.5 sm:w-3 sm:h-3 md:w-4 md:h-4" />
             <span className="tracking-wide font-['Syne']">EXPLORE OUR COLLECTION</span>
           </div>
 
-          <div className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-light text-white mb-8 leading-tight font-['DM_Serif_Display']">
+          <div className="text-base sm:text-lg md:text-5xl lg:text-7xl font-light text-white mb-0.5 sm:mb-1 md:mb-8 leading-tight font-['DM_Serif_Display']">
             Categories
           </div>
 
-          <p className="text-lg sm:text-xl md:text-2xl text-white/90 mb-12 leading-relaxed max-w-4xl mx-auto font-['Space_Grotesk'] px-4">
+          <p className="text-[9px] sm:text-[10px] md:text-lg lg:text-2xl text-white/90 mb-0.5 sm:mb-1 md:mb-12 leading-relaxed max-w-4xl mx-auto font-['Space_Grotesk'] px-2 sm:px-4">
             Explore our curated collection of furniture, lighting, and decor
           </p>
 
-          <div className="flex flex-wrap justify-center gap-4">
+          <div className="flex flex-wrap justify-center gap-1.5 sm:gap-2 md:gap-4">
             <Link href="#categories">
-              <Button size="lg" className="bg-white text-gray-900 hover:bg-gray-100 px-8 py-6 font-['Syne']">
+              <Button className="bg-white text-gray-900 hover:bg-gray-100 px-1.5 py-0.5 sm:px-2 sm:py-1 md:px-8 md:py-6 font-['Syne'] text-[9px] sm:text-[10px] md:text-base">
                 EXPLORE COLLECTION
               </Button>
             </Link>
-            <Button size="lg" variant="outline" className="border-2 border-white text-white hover:bg-white hover:text-gray-900 px-8 py-6 font-['Syne']">
+            <Button variant="outline" className="border-2 border-white text-white hover:bg-white hover:text-gray-900 px-1.5 py-0.5 sm:px-2 sm:py-1 md:px-8 md:py-6 font-['Syne'] text-[9px] sm:text-[10px] md:text-base">
               DESIGN CONSULTATION
             </Button>
           </div>
         </div>
 
-        {/* Scroll Indicator */}
-        <div className="absolute bottom-8 left-1/2 -translate-x-1/2">
-          <ChevronDown className="w-8 h-8 text-white/70" />
-        </div>
       </section>
 
       {/* Category Filter Pills */}
-      <section className="py-6 bg-white border-b border-gray-200 shadow-sm">
+      <section className="py-0 sm:py-6 bg-white border-b border-gray-200 shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6">
           <div className="flex gap-2 sm:gap-3 overflow-x-auto pb-2 -mx-4 px-4 sm:mx-0 sm:px-0">
             {categoryFilters.map((filter) => (
@@ -146,7 +142,7 @@ export default function CategoriesPage() {
       </section>
 
       {/* Main Content */}
-      <section id="categories" className="py-12">
+      <section id="categories" className="py-1 sm:py-12">
         <div className="max-w-7xl mx-auto px-6">
           {/* Toolbar */}
           <Card className="p-6 mb-8 bg-white shadow-sm border-0">

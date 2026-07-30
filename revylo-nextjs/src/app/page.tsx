@@ -286,7 +286,7 @@ export default function Home() {
                   initial={{ opacity: 0, y: 30 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.6, delay: 0.5 }}
-                  className="relative z-20 mt-2 mb-12 sm:mb-8 lg:mb-0"
+                  className="relative z-20 mt-2 mb-3 sm:mb-8 lg:mb-0"
                 >
                   <Link href="/categories">
                     <motion.div
@@ -318,14 +318,14 @@ export default function Home() {
                 initial={{ opacity: 0, x: 100 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ duration: 0.8, delay: 0.8 }}
-                className="relative w-full max-w-full pt-8 sm:pt-12 lg:pt-16"
+                className="relative w-full max-w-full pt-2 sm:pt-12 lg:pt-16"
               >
                 {/* Small Badge - Above the slider */}
                 <motion.div
                   initial={{ opacity: 0, y: -20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.6, delay: 0.2 }}
-                  className="flex justify-center mb-6 sm:mb-8 lg:mb-10"
+                  className="flex justify-center mb-2 sm:mb-8 lg:mb-10"
                 >
                   <div className="flex items-center gap-2 px-3 py-2 sm:px-4 sm:py-2.5 bg-white/10 backdrop-blur-sm rounded-full border border-white/20">
                     <motion.div
@@ -341,9 +341,9 @@ export default function Home() {
                 </motion.div>
 
                 {allCategories.length > 0 ? (
-                  <div className="relative w-full pt-8 sm:pt-10">
+                  <div className="relative w-full pt-2 sm:pt-10">
                     {/* Slider Container with extra space for elevated card */}
-                    <div className="relative h-[300px] sm:h-[360px] lg:h-[440px] w-full overflow-x-hidden overflow-y-visible will-change-transform">
+                    <div className="relative h-[220px] sm:h-[360px] lg:h-[440px] w-full overflow-x-hidden overflow-y-visible will-change-transform">
                       <div className="absolute inset-0 flex items-center justify-center px-2 pt-6">
                         <motion.div
                           animate={{ x: `calc(50% - ${currentSlide * 220}px - 100px)` }}
@@ -391,7 +391,7 @@ export default function Home() {
                                       y: isActive ? -20 : 0 
                                     }}
                                     transition={{ duration: 0.3 }}
-                                    className="relative h-[260px] sm:h-[320px] lg:h-[360px] w-full bg-white rounded-2xl sm:rounded-3xl overflow-hidden shadow-2xl cursor-pointer border-2 sm:border-3 border-white/30 hover:border-white/50 transition-all"
+                                    className="relative h-[190px] sm:h-[320px] lg:h-[360px] w-full bg-white rounded-2xl sm:rounded-3xl overflow-hidden shadow-2xl cursor-pointer border-2 sm:border-3 border-white/30 hover:border-white/50 transition-all"
                                     style={{ 
                                       willChange: 'transform',
                                       backfaceVisibility: 'hidden',
@@ -498,7 +498,7 @@ export default function Home() {
                     </div>
 
                     {/* Navigation Arrows - Below slider */}
-                    <div className="flex items-center justify-center gap-3 mt-8 sm:mt-10 lg:mt-8">
+                    <div className="flex items-center justify-center gap-3 mt-3 sm:mt-10 lg:mt-8">
                       <motion.button
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
@@ -526,7 +526,7 @@ export default function Home() {
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
                       transition={{ delay: 1.2 }}
-                      className="flex justify-center gap-1.5 mt-6 sm:mt-8"
+                      className="flex justify-center gap-1.5 mt-3 sm:mt-8"
                     >
                       {allCategories.map((_, i) => (
                         <motion.button
