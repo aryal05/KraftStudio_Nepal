@@ -29,16 +29,23 @@ export const dynamic = 'force-dynamic';
 
 export default function Home() {
   const { scrollY } = useScroll();
-  const heroY = useTransform(scrollY, [0, 500], [0, 150]);
+  const heroY = useTransform(scrollY, [0, 500], [0, 100]);
   const heroOpacity = useTransform(scrollY, [0, 300], [1, 0]);
   
   const [isMarquee1Paused, setIsMarquee1Paused] = useState(false);
   const [isMarquee2Paused, setIsMarquee2Paused] = useState(false);
   const [isMarquee3Paused, setIsMarquee3Paused] = useState(false);
+  const [currentSlide, setCurrentSlide] = useState(0);
   
   const marquee1Controls = useAnimationControls();
   const marquee2Controls = useAnimationControls();
   const marquee3Controls = useAnimationControls();
+
+  // Fetch data from database - MUST BE BEFORE useEffects that use this data
+  const { data: allCategories = [] } = trpc.categories.getAll.useQuery(); // Get ALL categories for dynamic slider
+  const { data: featuredCategories = [] } = trpc.categories.getFeatured.useQuery({ limit: 3 }); // Get featured for grid section
+  const { data: colorSwatches = [] } = trpc.colorSwatches.getAll.useQuery();
+  const { data: reviews = [] } = trpc.reviews.getAll.useQuery();
 
   useEffect(() => {
     if (isMarquee1Paused) {
@@ -88,205 +95,471 @@ export default function Home() {
     }
   }, [isMarquee3Paused, marquee3Controls]);
 
-  // Fetch data from database
-  const { data: featuredCategories = [] } = trpc.categories.getFeatured.useQuery({ limit: 3 });
-  const { data: colorSwatches = [] } = trpc.colorSwatches.getAll.useQuery();
-  const { data: reviews = [] } = trpc.reviews.getAll.useQuery();
+  // Auto-play slider effect - cycle through ALL categories every 4 seconds with infinite loop
+  useEffect(() => {
+    if (allCategories.length > 0) {
+      const interval = setInterval(() => {
+        setCurrentSlide((prev) => (prev + 1) % allCategories.length);
+      }, 4000);
+      return () => clearInterval(interval);
+    }
+  }, [allCategories.length]);
 
   return (
     <PageTransition>
-      <div className="min-h-screen bg-white">
+      <div className="min-h-screen bg-white overflow-x-hidden">
         <Navigation />
 
-        {/* HERO SECTION - Bold Split Typography */}
-        <section className="relative min-h-screen flex items-center justify-center overflow-hidden bg-[#f7f7f7]">
-          {/* Background with Parallax */}
+        {/* HERO SECTION - Bold Split Typography with Category Slider */}
+        <section className="relative min-h-screen flex items-center justify-center overflow-hidden bg-[#f7f7f7] w-full max-w-[100vw]">
+          {/* Dynamic Background with Parallax - Changes with active category */}
           <motion.div
             style={{ y: heroY }}
             className="absolute inset-0 scale-110"
           >
-            <div
-              className="w-full h-full bg-cover bg-center"
-              style={{
-                backgroundImage: "url('https://images.unsplash.com/photo-1540574163026-643ea20ade25?w=1920&h=1080&fit=crop&q=80')",
-              }}
-            />
+            {allCategories.length > 0 ? (
+              allCategories.map((cat: any, index: number) => (
+                <motion.div
+                  key={cat.id}
+                  animate={{
+                    opacity: index === currentSlide ? 1 : 0,
+                    scale: index === currentSlide ? 1 : 1.1,
+                  }}
+                  transition={{
+                    duration: 1.2,
+                    ease: [0.22, 1, 0.36, 1]
+                  }}
+                  className="absolute inset-0 w-full h-full bg-cover bg-center"
+                  style={{
+                    backgroundImage: `url('${cat.imageUrl || "https://images.unsplash.com/photo-1540574163026-643ea20ade25?w=1920&h=1080&fit=crop&q=80"}')`,
+                  }}
+                />
+              ))
+            ) : (
+              <div
+                className="w-full h-full bg-cover bg-center"
+                style={{
+                  backgroundImage: "url('https://images.unsplash.com/photo-1540574163026-643ea20ade25?w=1920&h=1080&fit=crop&q=80')",
+                }}
+              />
+            )}
           </motion.div>
 
-          {/* Dark Overlay */}
-          <div className="absolute inset-0 bg-black/70" />
+          {/* Dark Overlay - slightly animated */}
+          <motion.div 
+            animate={{
+              opacity: [0.7, 0.75, 0.7]
+            }}
+            transition={{
+              duration: 8,
+              repeat: Infinity,
+              ease: "easeInOut"
+            }}
+            className="absolute inset-0 bg-black/70" 
+          />
 
-          {/* Hero Content */}
-          <motion.div
-            style={{ opacity: heroOpacity }}
-            className="relative z-10 max-w-7xl mx-auto px-6 py-20 text-center"
-          >
-            {/* Small Badge */}
-            <motion.div
-              initial={{ opacity: 0, y: -20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.2 }}
-              className="inline-block mb-12"
-            >
-              <div className="flex items-center gap-3 px-5 py-3 bg-white/10 backdrop-blur-sm rounded-full border border-white/20">
+          {/* Hero Content - Responsive Layout */}
+          <div className="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6 py-8 sm:py-12 overflow-hidden">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center overflow-hidden">
+              
+              {/* LEFT SIDE - Text Content */}
+              <motion.div
+                style={{ opacity: heroOpacity }}
+                className="text-center lg:text-left pt-12 sm:pt-16 lg:pt-16"
+              >
+                {/* MASSIVE Split Typography with Interactive Effects */}
+                <div className="mb-3 sm:mb-4 overflow-visible">
+                  <motion.h1
+                    initial={{ opacity: 0, y: 100 }}
+                    animate={{ 
+                      opacity: 1, 
+                      y: [0, -10, 0]
+                    }}
+                    transition={{ 
+                      opacity: { duration: 0.8, delay: 0.4 },
+                      y: { 
+                        duration: 4, 
+                        delay: 1.5,
+                        repeat: Infinity,
+                        ease: "easeInOut"
+                      }
+                    }}
+                    whileHover={{ 
+                      scale: 1.02,
+                      textShadow: "0 0 30px rgba(255, 255, 255, 0.5)"
+                    }}
+                    className="text-[clamp(2rem,10vw,8rem)] font-bold leading-[0.9] tracking-tight uppercase font-['DM_Serif_Display'] mb-1 sm:mb-2 cursor-default"
+                    style={{
+                      background: "linear-gradient(to right, #ffffff 0%, #f0f0f0 50%, #ffffff 100%)",
+                      backgroundClip: "text",
+                      WebkitBackgroundClip: "text",
+                      WebkitTextFillColor: "transparent",
+                      backgroundSize: "200% auto",
+                    }}
+                  >
+                    <motion.span
+                      animate={{
+                        backgroundPosition: ["0% center", "100% center", "0% center"]
+                      }}
+                      transition={{
+                        duration: 8,
+                        repeat: Infinity,
+                        ease: "linear"
+                      }}
+                      style={{
+                        background: "linear-gradient(90deg, #ffffff, #d4d4d4, #ffffff)",
+                        backgroundSize: "200% auto",
+                        backgroundClip: "text",
+                        WebkitBackgroundClip: "text",
+                        WebkitTextFillColor: "transparent",
+                        display: "inline-block"
+                      }}
+                    >
+                      ELEVATE YOUR
+                    </motion.span>
+                  </motion.h1>
+                  <motion.h1
+                    initial={{ opacity: 0, y: 100 }}
+                    animate={{ 
+                      opacity: 1, 
+                      y: [0, -10, 0]
+                    }}
+                    transition={{ 
+                      opacity: { duration: 0.8, delay: 0.6 },
+                      y: { 
+                        duration: 4, 
+                        delay: 1.8,
+                        repeat: Infinity,
+                        ease: "easeInOut"
+                      }
+                    }}
+                    whileHover={{ 
+                      scale: 1.02,
+                      textShadow: "0 0 30px rgba(139, 115, 85, 0.8)"
+                    }}
+                    className="text-[clamp(2.5rem,12vw,8rem)] font-bold leading-[0.9] tracking-tight uppercase font-['DM_Serif_Display'] cursor-default"
+                    style={{
+                      background: "linear-gradient(to right, #ffffff 0%, #8b7355 50%, #ffffff 100%)",
+                      backgroundClip: "text",
+                      WebkitBackgroundClip: "text",
+                      WebkitTextFillColor: "transparent",
+                      backgroundSize: "200% auto",
+                    }}
+                  >
+                    <motion.span
+                      animate={{
+                        backgroundPosition: ["0% center", "100% center", "0% center"]
+                      }}
+                      transition={{
+                        duration: 8,
+                        repeat: Infinity,
+                        ease: "linear",
+                        delay: 0.5
+                      }}
+                      style={{
+                        background: "linear-gradient(90deg, #ffffff, #8b7355, #ffffff)",
+                        backgroundSize: "200% auto",
+                        backgroundClip: "text",
+                        WebkitBackgroundClip: "text",
+                        WebkitTextFillColor: "transparent",
+                        display: "inline-block"
+                      }}
+                    >
+                      LIVING SPACE
+                    </motion.span>
+                  </motion.h1>
+                </div>
+
+                {/* Subheadline */}
+                <motion.p
+                  initial={{ opacity: 0, y: 30 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.8, delay: 1 }}
+                  className="text-white/90 text-base sm:text-lg md:text-xl mb-4 sm:mb-6 max-w-xl font-['Space_Grotesk'] leading-relaxed mx-auto lg:mx-0"
+                >
+                  Thoughtfully crafted furniture that transforms
+                  houses into homes
+                </motion.p>
+
+                {/* Primary CTA - Visible immediately with high contrast */}
                 <motion.div
-                  animate={{ rotate: 360 }}
-                  transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+                  initial={{ opacity: 0, y: 30 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.6, delay: 0.5 }}
+                  className="relative z-20 mt-2 mb-12 sm:mb-8 lg:mb-0"
                 >
-                  <Compass className="w-4 h-4 text-white" />
+                  <Link href="/categories">
+                    <motion.div
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                      className="inline-block w-full sm:w-auto"
+                    >
+                      <Button
+                        size="lg"
+                        className="w-full sm:w-auto bg-[#8b7355] text-white hover:bg-[#a08264] px-6 sm:px-8 md:px-12 py-4 sm:py-5 md:py-7 text-sm sm:text-base md:text-lg font-bold tracking-[0.15em] uppercase shadow-2xl font-['Syne'] rounded-none border-2 border-[#8b7355] hover:border-[#a08264] transition-all"
+                      >
+                        <span className="flex items-center justify-center gap-2 sm:gap-3">
+                          EXPLORE COLLECTION
+                          <motion.div
+                            animate={{ x: [0, 5, 0] }}
+                            transition={{ duration: 1.5, repeat: Infinity }}
+                          >
+                            <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5" />
+                          </motion.div>
+                        </span>
+                      </Button>
+                    </motion.div>
+                  </Link>
                 </motion.div>
-                <span className="text-white text-sm tracking-[0.2em] font-['Syne'] font-medium">
-                  DESIGN THAT FEELS BUILT
-                </span>
-              </div>
-            </motion.div>
+              </motion.div>
 
-            {/* MASSIVE Split Typography with Interactive Effects */}
-            <div className="mb-12 overflow-visible">
-              <motion.h1
-                initial={{ opacity: 0, y: 100 }}
-                animate={{ 
-                  opacity: 1, 
-                  y: [0, -10, 0]
-                }}
-                transition={{ 
-                  opacity: { duration: 0.8, delay: 0.4 },
-                  y: { 
-                    duration: 4, 
-                    delay: 1.5,
-                    repeat: Infinity,
-                    ease: "easeInOut"
-                  }
-                }}
-                whileHover={{ 
-                  scale: 1.02,
-                  textShadow: "0 0 30px rgba(255, 255, 255, 0.5)"
-                }}
-                className="text-[clamp(3rem,15vw,12rem)] font-bold leading-[0.9] tracking-tight uppercase font-['DM_Serif_Display'] mb-4 cursor-default"
-                style={{
-                  background: "linear-gradient(to right, #ffffff 0%, #f0f0f0 50%, #ffffff 100%)",
-                  backgroundClip: "text",
-                  WebkitBackgroundClip: "text",
-                  WebkitTextFillColor: "transparent",
-                  backgroundSize: "200% auto",
-                }}
+              {/* RIGHT SIDE - Badge + Infinite Loop Carousel showing ALL categories */}
+              <motion.div
+                initial={{ opacity: 0, x: 100 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.8, delay: 0.8 }}
+                className="relative w-full max-w-full pt-8 sm:pt-12 lg:pt-16"
               >
-                <motion.span
-                  animate={{
-                    backgroundPosition: ["0% center", "100% center", "0% center"]
-                  }}
-                  transition={{
-                    duration: 8,
-                    repeat: Infinity,
-                    ease: "linear"
-                  }}
-                  style={{
-                    background: "linear-gradient(90deg, #ffffff, #d4d4d4, #ffffff)",
-                    backgroundSize: "200% auto",
-                    backgroundClip: "text",
-                    WebkitBackgroundClip: "text",
-                    WebkitTextFillColor: "transparent",
-                    display: "inline-block"
-                  }}
+                {/* Small Badge - Above the slider */}
+                <motion.div
+                  initial={{ opacity: 0, y: -20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.6, delay: 0.2 }}
+                  className="flex justify-center mb-6 sm:mb-8 lg:mb-10"
                 >
-                  ELEVATE YOUR
-                </motion.span>
-              </motion.h1>
-              <motion.h1
-                initial={{ opacity: 0, y: 100 }}
-                animate={{ 
-                  opacity: 1, 
-                  y: [0, -10, 0]
-                }}
-                transition={{ 
-                  opacity: { duration: 0.8, delay: 0.6 },
-                  y: { 
-                    duration: 4, 
-                    delay: 1.8,
-                    repeat: Infinity,
-                    ease: "easeInOut"
-                  }
-                }}
-                whileHover={{ 
-                  scale: 1.02,
-                  textShadow: "0 0 30px rgba(139, 115, 85, 0.8)"
-                }}
-                className="text-[clamp(3rem,15vw,12rem)] font-bold leading-[0.9] tracking-tight uppercase font-['DM_Serif_Display'] cursor-default"
-                style={{
-                  background: "linear-gradient(to right, #ffffff 0%, #8b7355 50%, #ffffff 100%)",
-                  backgroundClip: "text",
-                  WebkitBackgroundClip: "text",
-                  WebkitTextFillColor: "transparent",
-                  backgroundSize: "200% auto",
-                }}
-              >
-                <motion.span
-                  animate={{
-                    backgroundPosition: ["0% center", "100% center", "0% center"]
-                  }}
-                  transition={{
-                    duration: 8,
-                    repeat: Infinity,
-                    ease: "linear",
-                    delay: 0.5
-                  }}
-                  style={{
-                    background: "linear-gradient(90deg, #ffffff, #8b7355, #ffffff)",
-                    backgroundSize: "200% auto",
-                    backgroundClip: "text",
-                    WebkitBackgroundClip: "text",
-                    WebkitTextFillColor: "transparent",
-                    display: "inline-block"
-                  }}
-                >
-                  LIVING SPACE
-                </motion.span>
-              </motion.h1>
+                  <div className="flex items-center gap-2 px-3 py-2 sm:px-4 sm:py-2.5 bg-white/10 backdrop-blur-sm rounded-full border border-white/20">
+                    <motion.div
+                      animate={{ rotate: 360 }}
+                      transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+                    >
+                      <Compass className="w-3 h-3 sm:w-4 sm:h-4 text-white" />
+                    </motion.div>
+                    <span className="text-white text-[9px] sm:text-xs tracking-[0.15em] font-['Syne'] font-medium whitespace-nowrap">
+                      DESIGN THAT FEELS BUILT
+                    </span>
+                  </div>
+                </motion.div>
+
+                {allCategories.length > 0 ? (
+                  <div className="relative w-full pt-8 sm:pt-10">
+                    {/* Slider Container with extra space for elevated card */}
+                    <div className="relative h-[300px] sm:h-[360px] lg:h-[440px] w-full overflow-x-hidden overflow-y-visible will-change-transform">
+                      <div className="absolute inset-0 flex items-center justify-center px-2 pt-6">
+                        <motion.div
+                          animate={{ x: `calc(50% - ${currentSlide * 220}px - 100px)` }}
+                          transition={{
+                            duration: 0.6,
+                            ease: [0.33, 1, 0.68, 1],
+                          }}
+                          className="flex gap-3 sm:gap-4"
+                          style={{ 
+                            willChange: 'transform',
+                            transform: 'translate3d(0, 0, 0)',
+                          }}
+                        >
+                          {/* Render categories in infinite loop */}
+                          {[...allCategories, ...allCategories].map((cat: any, arrayIndex: number) => {
+                            const actualIndex = arrayIndex % allCategories.length;
+                            const displayPosition = arrayIndex - currentSlide;
+                            const isActive = displayPosition === 0;
+                            const isVisible = displayPosition >= 0 && displayPosition < 3;
+
+                            return (
+                              <motion.div
+                                key={`${cat.id}-${arrayIndex}`}
+                                animate={{
+                                  y: isActive ? -15 : 0,
+                                  scale: isActive ? 1.05 : 0.88,
+                                  opacity: isVisible ? (isActive ? 1 : 0.4) : 0,
+                                }}
+                                transition={{
+                                  duration: 0.5,
+                                  ease: [0.33, 1, 0.68, 1],
+                                }}
+                                className="relative flex-shrink-0"
+                                style={{ 
+                                  width: "200px",
+                                  willChange: 'transform, opacity',
+                                  transform: 'translate3d(0, 0, 0)',
+                                  zIndex: isActive ? 20 : 10,
+                                }}
+                              >
+                                <Link href={`/category/${cat.slug}`}>
+                                  <motion.div
+                                    whileHover={{ 
+                                      scale: isActive ? 1.08 : 0.92, 
+                                      y: isActive ? -20 : 0 
+                                    }}
+                                    transition={{ duration: 0.3 }}
+                                    className="relative h-[260px] sm:h-[320px] lg:h-[360px] w-full bg-white rounded-2xl sm:rounded-3xl overflow-hidden shadow-2xl cursor-pointer border-2 sm:border-3 border-white/30 hover:border-white/50 transition-all"
+                                    style={{ 
+                                      willChange: 'transform',
+                                      backfaceVisibility: 'hidden',
+                                      transform: 'translate3d(0, 0, 0)',
+                                    }}
+                                  >
+                                    {/* Image */}
+                                    <div className="relative h-[70%] overflow-hidden">
+                                      <motion.img
+                                        animate={{ 
+                                          scale: isActive ? 1 : 1.15,
+                                          filter: isActive ? "brightness(1)" : "brightness(0.75)"
+                                        }}
+                                        transition={{ duration: 0.6 }}
+                                        src={cat.imageUrl || "https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?w=400&h=300&fit=crop&q=80"}
+                                        alt={cat.name}
+                                        className="w-full h-full object-cover"
+                                        onError={(e) => {
+                                          e.currentTarget.src = "https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?w=400&h=300&fit=crop&q=80";
+                                        }}
+                                      />
+                                      <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
+                                      
+                                      {/* Category Name on Image */}
+                                      {isActive && (
+                                        <motion.div
+                                          initial={{ opacity: 0, y: 20 }}
+                                          animate={{ opacity: 1, y: 0 }}
+                                          transition={{ delay: 0.2 }}
+                                          className="absolute bottom-2 sm:bottom-3 left-2 sm:left-3 right-2 sm:right-3"
+                                        >
+                                          <h3 className="text-white text-lg sm:text-xl lg:text-2xl font-bold uppercase font-['DM_Serif_Display'] tracking-wide drop-shadow-lg">
+                                            {cat.name}
+                                          </h3>
+                                        </motion.div>
+                                      )}
+                                    </div>
+
+                                    {/* Content */}
+                                    <div className="absolute bottom-0 left-0 right-0 p-2.5 sm:p-3 lg:p-4 bg-gradient-to-br from-white to-gray-50">
+                                      {!isActive && (
+                                        <h3 className="text-sm sm:text-base lg:text-lg font-bold text-gray-900 uppercase font-['DM_Serif_Display'] tracking-wide text-center line-clamp-1">
+                                          {cat.name}
+                                        </h3>
+                                      )}
+                                      
+                                      {isActive && (
+                                        <motion.div
+                                          initial={{ opacity: 0, y: 10 }}
+                                          animate={{ opacity: 1, y: 0 }}
+                                          transition={{ delay: 0.3 }}
+                                        >
+                                          <p className="text-gray-600 text-[10px] sm:text-xs font-['Space_Grotesk'] mb-1.5 sm:mb-2 line-clamp-2 text-center">
+                                            {cat.description || "Discover our curated collection"}
+                                          </p>
+                                          <div className="flex items-center justify-center gap-1.5 text-[#8b7355] font-bold text-[10px] sm:text-xs uppercase tracking-wide font-['Syne']">
+                                            <span>VIEW COLLECTION</span>
+                                            <motion.div
+                                              animate={{ x: [0, 3, 0] }}
+                                              transition={{ duration: 1.5, repeat: Infinity }}
+                                            >
+                                              <ArrowRight className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
+                                            </motion.div>
+                                          </div>
+                                        </motion.div>
+                                      )}
+                                    </div>
+
+                                    {/* Featured Badge */}
+                                    {isActive && (
+                                      <motion.div
+                                        initial={{ scale: 0, rotate: -45 }}
+                                        animate={{ scale: 1, rotate: 0 }}
+                                        transition={{ type: "spring", delay: 0.2 }}
+                                        className="absolute top-2 sm:top-3 right-2 sm:right-3 bg-[#8b7355] text-white px-2.5 sm:px-3 py-1 sm:py-1.5 text-[9px] sm:text-[10px] font-bold uppercase tracking-wider font-['Syne'] shadow-xl rounded-full"
+                                      >
+                                        FEATURED
+                                      </motion.div>
+                                    )}
+
+                                    {/* Shimmer Effect */}
+                                    {isActive && (
+                                      <motion.div
+                                        animate={{
+                                          x: ["-100%", "100%"],
+                                        }}
+                                        transition={{
+                                          duration: 2,
+                                          repeat: Infinity,
+                                          repeatDelay: 3,
+                                          ease: "linear"
+                                        }}
+                                        className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent"
+                                        style={{ pointerEvents: "none" }}
+                                      />
+                                    )}
+                                  </motion.div>
+                                </Link>
+                              </motion.div>
+                            );
+                          })}
+                        </motion.div>
+                      </div>
+                    </div>
+
+                    {/* Navigation Arrows - Below slider */}
+                    <div className="flex items-center justify-center gap-3 mt-8 sm:mt-10 lg:mt-8">
+                      <motion.button
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        whileHover={{ scale: 1.1 }}
+                        whileTap={{ scale: 0.9 }}
+                        onClick={() => setCurrentSlide((prev) => (prev - 1 + allCategories.length) % allCategories.length)}
+                        className="w-11 h-11 sm:w-12 sm:h-12 bg-white/95 backdrop-blur-sm rounded-full flex items-center justify-center shadow-xl hover:bg-white transition-all z-30 border-2 border-gray-200"
+                      >
+                        <ArrowRight className="w-5 h-5 sm:w-5 sm:h-5 text-gray-900 rotate-180" />
+                      </motion.button>
+                      <motion.button
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        whileHover={{ scale: 1.1 }}
+                        whileTap={{ scale: 0.9 }}
+                        onClick={() => setCurrentSlide((prev) => (prev + 1) % allCategories.length)}
+                        className="w-11 h-11 sm:w-12 sm:h-12 bg-white/95 backdrop-blur-sm rounded-full flex items-center justify-center shadow-xl hover:bg-white transition-all z-30 border-2 border-gray-200"
+                      >
+                        <ArrowRight className="w-5 h-5 sm:w-5 sm:h-5 text-gray-900" />
+                      </motion.button>
+                    </div>
+
+                    {/* Dots Indicator */}
+                    <motion.div
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      transition={{ delay: 1.2 }}
+                      className="flex justify-center gap-1.5 mt-6 sm:mt-8"
+                    >
+                      {allCategories.map((_, i) => (
+                        <motion.button
+                          key={i}
+                          onClick={() => setCurrentSlide(i)}
+                          whileHover={{ scale: 1.3 }}
+                          animate={{
+                            width: i === currentSlide ? "32px" : "8px",
+                            backgroundColor: i === currentSlide ? "#8b7355" : "rgba(255,255,255,0.4)"
+                          }}
+                          transition={{ duration: 0.3 }}
+                          className="h-2 rounded-full transition-all"
+                        />
+                      ))}
+                    </motion.div>
+                  </div>
+                ) : (
+                  <div className="h-[420px] flex items-center justify-center bg-white/10 backdrop-blur-sm rounded-3xl border-2 border-white/20">
+                    <div className="text-center">
+                      <motion.div
+                        animate={{ rotate: 360 }}
+                        transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
+                        className="w-12 h-12 border-4 border-white/20 border-t-white rounded-full mx-auto mb-4"
+                      />
+                      <p className="text-white/60 font-['Space_Grotesk']">Loading collections...</p>
+                    </div>
+                  </div>
+                )}
+              </motion.div>
+
             </div>
 
-            {/* Subheadline */}
-            <motion.p
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 1 }}
-              className="text-white/90 text-xl md:text-2xl mb-12 max-w-2xl mx-auto font-['Space_Grotesk'] leading-relaxed"
-            >
-              Thoughtfully crafted furniture that transforms
-              <br className="hidden md:block" />
-              houses into homes
-            </motion.p>
-
-            {/* Primary CTA */}
-            <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 1.2 }}
-            >
-              <Link href="/categories">
-                <motion.div
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  className="inline-block"
-                >
-                  <Button
-                    size="lg"
-                    className="bg-white text-gray-900 hover:bg-gray-100 px-12 py-8 text-lg font-bold tracking-[0.1em] uppercase shadow-2xl font-['Syne'] rounded-none"
-                  >
-                    <span className="flex items-center gap-3">
-                      EXPLORE COLLECTION
-                      <motion.div
-                        animate={{ x: [0, 5, 0] }}
-                        transition={{ duration: 1.5, repeat: Infinity }}
-                      >
-                        <ArrowRight className="w-6 h-6" />
-                      </motion.div>
-                    </span>
-                  </Button>
-                </motion.div>
-              </Link>
-            </motion.div>
-
-            {/* Scroll Indicator */}
+            {/* Scroll Indicator - Centered */}
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -301,26 +574,26 @@ export default function Home() {
                 <motion.div className="w-2 h-2 bg-white/80 rounded-full mx-auto" />
               </motion.div>
             </motion.div>
-          </motion.div>
+          </div>
         </section>
 
         {/* CATEGORIES SECTION - Right After Hero */}
-        <section className="py-32 bg-white">
-          <div className="max-w-7xl mx-auto px-6">
+        <section className="py-20 sm:py-32 bg-white">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6">
             {/* Section Header */}
             <motion.div
               initial={{ opacity: 0, y: 40 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: "-100px" }}
               transition={{ duration: 0.8 }}
-              className="text-center mb-20"
+              className="text-center mb-12 sm:mb-20"
             >
               <motion.h2
                 initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: 0.2 }}
-                className="text-6xl md:text-7xl font-bold text-gray-900 leading-[0.95] mb-6 uppercase font-['DM_Serif_Display']"
+                className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-gray-900 leading-[0.95] mb-4 sm:mb-6 uppercase font-['DM_Serif_Display'] px-2"
               >
                 EXPLORE<br />
                 <span className="text-[#8b7355]">OUR COLLECTIONS</span>
@@ -330,7 +603,7 @@ export default function Home() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: 0.4 }}
-                className="text-gray-600 text-lg max-w-2xl mx-auto font-['Space_Grotesk']"
+                className="text-gray-600 text-base sm:text-lg max-w-2xl mx-auto font-['Space_Grotesk'] px-4"
               >
                 Curated collections for every room and every style
               </motion.p>
