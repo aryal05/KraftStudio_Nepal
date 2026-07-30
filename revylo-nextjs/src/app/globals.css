@@ -77,9 +77,6 @@
 }
 
 @layer base {
-  html {
-    scroll-behavior: smooth;
-  }
   * {
     @apply border-border outline-ring/50;
   }
@@ -118,14 +115,7 @@
   select:not(:disabled),
   input[type="checkbox"]:not(:disabled),
   input[type="radio"]:not(:disabled) {
-    @apply cursor-pointer transition-all duration-150;
-  }
-  button:active:not(:disabled),
-  [role="button"]:active:not([aria-disabled="true"]),
-  [type="button"]:active:not(:disabled),
-  [type="submit"]:active:not(:disabled),
-  [type="reset"]:active:not(:disabled) {
-    @apply scale-95;
+    @apply cursor-pointer;
   }
 }
 
@@ -156,20 +146,6 @@
     min-width: 0;
   }
 
-  /* Card lift effect on hover */
-  .group {
-    @apply transition-all duration-300;
-  }
-
-  .group:hover {
-    @apply -translate-y-1;
-  }
-
-  /* Image zoom effect */
-  img {
-    @apply transition-transform duration-500;
-  }
-
   @media (min-width: 640px) {
     .container {
       padding-left: 1.5rem; /* 24px - tablet padding */
@@ -182,16 +158,6 @@
       padding-left: 2rem; /* 32px - desktop padding */
       padding-right: 2rem;
       max-width: 1280px; /* Standard content width */
-    }
-  }
-
-  /* Respect prefers-reduced-motion */
-  @media (prefers-reduced-motion: reduce) {
-    html {
-      scroll-behavior: auto;
-    }
-    * {
-      @apply !transition-none !animate-none;
     }
   }
 }
